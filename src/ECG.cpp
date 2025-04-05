@@ -32,20 +32,16 @@ const float ECGgen::generarSenyalECG() {
     t_wave = gaussian_wave(temps - _P_duration - _QRS_duration, _T_amp, _T_duration);
   }
 
-  float ecg_signal = p_wave + qrs_wave + t_wave;
-
   rr_interval = 60.0 / _heart_rate * (1 + random(-rr_variability * 100, rr_variability * 100) / 100.0);
 
-  if (temps >= rr_interval) {
-    temps = 0.0;
-  }
+  if (temps >= rr_interval) { temps = 0.0; }
 
-  return ecg_signal;
+  return p_wave + qrs_wave + t_wave;
 }
 
-// Funció per iniciar el generador de nombres aleatoris
+// Ctor
 ECGgen::ECGgen() {
-  randomSeed(analogRead(0));
+  randomSeed(analogRead(0));  // Funció per iniciar el generador de nombres aleatoris
   fs = 500.0;
   temps = 0.0;
   dt = 1.0 / fs;
