@@ -77,12 +77,18 @@ void iniciarPaquetBLE(PaquetBLE* pq) {
 
 int afegirECGPaquet(PaquetBLE* pq, float valor) {
 // Pre: paquet inicat
-// Post: afegeix valor al paquet si hi ha espai i retorna 1. 0 altrament.
+// Post: afegeix valor al paquet si hi ha espai i si no n'hi ha, envia el paquet, reinicia i afegeix el valor
+    int returnval = 0;
 
-    if (pq->ecg.last == MIDA_BUF_ECG_BLE) { // Si s'assoleix la mida màxima, no afegeixi retorna 0
-        return 0;
+    // Si hem emplenat el paquet BLE, enviar-lo i reiniciar el buffer
+    if (pq->ecg.last == MIDA_BUF_ECG_BLE) {
+        enviarFloatBLE(pq->ecg.bufferECG, MIDA_BUF_ECG_BLE * sizeof(pq->ecg.bufferECG[0]));   // Enviam el paquet x BLE
+        pq->ecg.last = 0;  // reiniciem el buffer
+        returnval = 1;
     }
+
     pq->ecg.bufferECG[pq->ecg.last] = valor;
     pq->ecg.last++;
-    return 1;
+
+    return returnval;   // 0 si no s'ha enviat res, 1 si sí s'ha enviat
 }

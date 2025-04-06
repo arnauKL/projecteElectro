@@ -2,63 +2,51 @@
 #include "ECG.h"
 #include "BLEHandler.h"
 #include "config.h"
-
-// TODO: afegir específics de BLE al fitxer BLEHandler.h/.c
-
-//----------------------------------------------------------------------
-
-typedef struct {
-    float buffer[MAX_BUFFER_ECG];
-    int first;
-    int last;   // primer espai lliure
-    int capacitat;
-} CoaCircular;
-
-void iniciarCoa(CoaCircular* coa) {
-    coa->first = 0;
-    coa->last = 0;
-    coa->capacitat = MAX_BUFFER_ECG;    // No m'agrada, s'hauria de canviar
-}
-
-void afegirValor(CoaCircular* coa, float valor) {
-// Pre: coa i valor
-// Post: afegeix l'element al final de la coa
-
-    // afegim el valor
-    coa->buffer[coa->last] = valor;
-
-    // Incrementem
-    coa->last++;
-
-    // Si ens passem, fem la volta
-    if (coa->last > coa->capacitat) { coa->last = 0; }
-}
+//#include "CoaCircular.h"
 
 //----------------------------------------------------------------------
 
 ECGgen ecgGen;      // Generador d'ECG x tests
-CoaCircular coaEcg; // Estructura de coa circular per guardar dades que arriben d'ECG
 PaquetBLE pBLE;
+
+float umbral = 0.6;          // Llindar simple (s'hauria de fer automàtic)
+unsigned long tempsUltimPic = 0;
+
+float anterior = 0;
+float actual = 0;
+float seguent = 0;
+float llindar = 0.7;
+
+bool detectarPicR(float mostraNova, float mostraAnt, float mostraSeg, float llindar) {
+// Pre: "buffer" cutre; Post: retorna cert si hi ha un pic
+    return (mostraAnt < mostraNova &&
+            mostraNova > mostraSeg &&
+            mostraNova > llindar);
+}
 
 void setup() {
     Serial.begin(BAUD_RATIO);
     delay(1000);
     iniciarBLE(); // Iniciem la comunicació x BLE
-    iniciarCoa(&coaEcg);
 }
 
 //----------------------------------------------------------------------
 
-void loop() {
-
-    // Si hem emplenat el paquet BLE, enviar-lo i reiniciar el buffer
-    if (pBLE.ecg.last == MIDA_BUF_ECG_BLE) {
-        enviarFloatBLE(pBLE.ecg.bufferECG, MIDA_BUF_ECG_BLE * sizeof(pBLE.ecg.bufferECG[0]));   // Enviam el paquet x BLE
-        pBLE.ecg.last = 0;  // reiniciem el buffer
-    }
-    
+void loop() {    
     float ecg_value = ecgGen.generarSenyalECG();        // 'rebem' dades d'ECG
-    afegirValor(&coaEcg, ecg_value);                    // guardem al buffef de dades ECG
+
+    anterior = actual;
+    actual = seguent;
+    seguent = ecg_value;
+
+    // Detectar pic R
+    if (detectarPicR(actual, anterior, seguent, llindar)) {
+        unsigned long rr = millis() - tempsUltimPic;
+        tempsUltimPic = millis();
+
+        Serial.print("interval RR (ms): ");
+        Serial.println(rr);
+    }
 
     // afegir el valor al paquet BLE
     afegirECGPaquet(&pBLE, ecg_value);
