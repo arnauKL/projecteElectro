@@ -3,7 +3,7 @@
 #include "BLEHandler.h"
 #include "config.h"
 
-ECGgen ecg;
+ECGgen ecg;     // Generador d'ECG x tests
 
 void setup() {
     Serial.begin(BAUD_RATIO);
