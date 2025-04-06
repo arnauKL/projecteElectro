@@ -5,7 +5,6 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
-#include <vector>
 
 using namespace std;
 
@@ -68,4 +67,22 @@ void enviarFloatBLE(const float* data, size_t byteLength) {
     if (deviceConnected && !oldDeviceConnected) {
         oldDeviceConnected = deviceConnected;
     }
+}
+
+void iniciarPaquetBLE(PaquetBLE* pq) {
+// Pre: paquet
+// Post: inicialitza
+    pq->ecg.last = 0;
+}
+
+int afegirECGPaquet(PaquetBLE* pq, float valor) {
+// Pre: paquet inicat
+// Post: afegeix valor al paquet si hi ha espai i retorna 1. 0 altrament.
+
+    if (pq->ecg.last == MIDA_BUF_ECG_BLE) { // Si s'assoleix la mida màxima, no afegeixi retorna 0
+        return 0;
+    }
+    pq->ecg.bufferECG[pq->ecg.last] = valor;
+    pq->ecg.last++;
+    return 1;
 }

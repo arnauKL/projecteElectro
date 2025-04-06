@@ -14,28 +14,10 @@ typedef struct {
     int capacitat;
 } CoaCircular;
 
-typedef struct {
-// Estructura per guardar els paquets de BLE. Per ara només conté l'ECG
-    struct {
-        float bufferECG[MIDA_BUF_ECG_BLE];  // Crec q això canviarà a ser `uint` quan tinguem les dades de l'ADS (Seria més eficient tb)
-        int last;                           // primer espai lliure
-    } ecg;
-} PaquetBLE;
-
-ECGgen ecgGen;      // Generador d'ECG x tests
-CoaCircular coaEcg; // Estructura de coa circular per guardar dades que arriben d'ECG
-PaquetBLE pBLE;
-
-//----------------------------------------------------------------------
-
 void iniciarCoa(CoaCircular* coa) {
     coa->first = 0;
     coa->last = 0;
     coa->capacitat = MAX_BUFFER_ECG;    // No m'agrada, s'hauria de canviar
-}
-
-void iniciarPaquetBLE(PaquetBLE* pq) {
-    pq->ecg.last = 0;
 }
 
 void afegirValor(CoaCircular* coa, float valor) {
@@ -52,11 +34,20 @@ void afegirValor(CoaCircular* coa, float valor) {
     if (coa->last > coa->capacitat) { coa->last = 0; }
 }
 
+//----------------------------------------------------------------------
+
+ECGgen ecgGen;      // Generador d'ECG x tests
+CoaCircular coaEcg; // Estructura de coa circular per guardar dades que arriben d'ECG
+PaquetBLE pBLE;
+
 void setup() {
     Serial.begin(BAUD_RATIO);
     delay(1000);
     iniciarBLE(); // Iniciem la comunicació x BLE
+    iniciarCoa(&coaEcg);
 }
+
+//----------------------------------------------------------------------
 
 void loop() {
 
@@ -70,9 +61,7 @@ void loop() {
     afegirValor(&coaEcg, ecg_value);                    // guardem al buffef de dades ECG
 
     // afegir el valor al paquet BLE
-    // TODO: ficar això en una funció x evitar errors d'accés
-    pBLE.ecg.bufferECG[pBLE.ecg.last] = ecg_value;
-    pBLE.ecg.last++;
+    afegirECGPaquet(&pBLE, ecg_value);
     
     //Serial.println(ecg_value);  // Mostrar el senyal ECG tb x serial (debug)
 
