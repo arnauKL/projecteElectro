@@ -11,6 +11,6 @@ extern bool deviceConnected;
 
 // Funcions
 void iniciarBLE();
-void enviarBLE(const float* data, size_t length);
+void enviarFloatBLE(const float* data, size_t length);
 
 #endif

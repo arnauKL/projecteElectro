@@ -32,7 +32,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 
 // Funció x iniciar el BLE
 void iniciarBLE() {
-    Serial.println("Iniciant BLE...");
+    //Serial.println("Iniciant BLE...");
     BLEDevice::init("DEPRESP-32");
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
@@ -50,20 +50,19 @@ void iniciarBLE() {
     pAdvertising->addServiceUUID(SERVICE_UUID);
     pAdvertising->setScanResponse(true);
     BLEDevice::startAdvertising();
-    Serial.println("BLE iniciat i en publicació");
+    //Serial.println("BLE iniciat i en publicació");
 }
 
 // Funció per enviar dades per BLE
-void enviarBLE(const float* data, size_t length) {
+void enviarFloatBLE(const float* data, size_t byteLength) {
+// Pre: punter al primer element d'un array de float i la mida en bytes de l'array
     if (deviceConnected) {
-        pCharacteristic->setValue((uint8_t*)data, length * sizeof(float)); // Això és assumint que 'data' és un array de float
+        pCharacteristic->setValue((uint8_t*)data, byteLength);
         pCharacteristic->notify();
-        Serial.println("Dades enviades per BLE");
     }
     if (!deviceConnected && oldDeviceConnected) {
         delay(500);
         pServer->startAdvertising();
-        Serial.println("Buscant dispositiu BLE...");
         oldDeviceConnected = deviceConnected;
     }
     if (deviceConnected && !oldDeviceConnected) {
