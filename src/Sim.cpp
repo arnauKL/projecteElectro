@@ -1,21 +1,21 @@
-#include "ECG.h"
+#include "Sim.h"
 #include <cmath>
 #include <Arduino.h>
 
 // Funció per generar una ona gaussiana per a les onades P, QRS i T
-float ECGgen::gaussian_wave(float t, float amplitude, float duration) {
+float Sim::gaussian_wave(float t, float amplitude, float duration) {
   return amplitude * exp(-0.5 * pow(t / (duration / 2.0), 2));
 }
 
 // Funció per simular el complex QRS amb una part negativa (Q i S)
-float ECGgen::qrs_wave_with_negatives(float t, float amplitude, float duration) {
+float Sim::qrs_wave_with_negatives(float t, float amplitude, float duration) {
   float positive_peak = gaussian_wave(t, amplitude, duration / 2.0);
   float negative_peak = gaussian_wave(t - duration / 2.0, -amplitude / 2.0, duration / 2.0);
   return positive_peak + negative_peak;
 }
 
 // Funció per generar senyal d'ECG
-const float ECGgen::generarSenyalECG() {
+const float Sim::generarSenyalECG() {
   float p_wave = 0.0;
   float qrs_wave = 0.0;
   float t_wave = 0.0;
@@ -40,7 +40,7 @@ const float ECGgen::generarSenyalECG() {
 }
 
 // Ctor
-ECGgen::ECGgen() {
+Sim::Sim() {
   randomSeed(analogRead(0));  // Funció per iniciar el generador de nombres aleatoris
   fs = 500.0;
   temps = 0.0;

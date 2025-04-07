@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "ECG.h"
+#include "Sim.h"
 #include "BLEHandler.h"
 #include "config.h"
 //#include "CoaCircular.h"
@@ -23,7 +23,7 @@ typedef struct {
 } VecRR;
 VecRR bufferRR;
 
-ECGgen ecgGen; // Generador d'ECG x tests
+Sim gen; // Generador d'ECG x tests
 PaquetBLE pBLE; // Paquet per enviar dades per BLE
 
 //
@@ -42,9 +42,9 @@ hw_timer_t* timer = NULL;
 
 // Funció per l'interrupt de mostreig de dades ECG
 void IRAM_ATTR onTimer() {
-    ecg_sample = ecgGen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
+    ecg_sample = gen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
     new_sample_available = true;
-    ecgGen.temps += ecgGen.dt;  // Avança temps simulat
+    gen.temps += gen.dt;  // Avança temps simulat
 }
 
 //----------------------------------------------------------------------
@@ -61,7 +61,7 @@ void setup() {
     debugln("timer iniciat OK");
     timerAttachInterrupt(timer, &onTimer, true);    // Connectem l'interrupt
     debugln("interrupt iniciat OK");
-    timerAlarmWrite(timer, 1000000 / ecgGen.fs, true); // Configurar alarma al fs de l'ECG
+    timerAlarmWrite(timer, 1000000 / gen.fs, true); // Configurar alarma al fs de l'ECG
     debugln("alarma OK");
     timerAlarmEnable(timer);
     debugln("Timer i interrupt configurat");
@@ -70,7 +70,6 @@ void setup() {
 void loop() {
 
     if (new_sample_available) {
-        debugln("nova sample rebuda");
         noInterrupts(); // Apagar interrupts per copiar dades en memòria compartida
         float ecg_value = ecg_sample;
         new_sample_available = false;
@@ -87,7 +86,7 @@ void loop() {
             tempsUltimPic = millis();
 
             Serial.print("interval RR (ms): ");
-            debugln(rr);
+            Serial.println(rr);
 
             // afegim al vector d'intervals RR
             if (bufferRR.nEl < MAX_BUFFER_RR) {

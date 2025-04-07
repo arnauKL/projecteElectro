@@ -57,7 +57,7 @@ void enviarFloatBLE(const float* data, size_t byteLength) {
     if (deviceConnected) {
         pCharacteristic->setValue((uint8_t*)data, byteLength);
         pCharacteristic->notify();
-        debug("paquet enviat")
+        debug("paquet enviat");
     }
     if (!deviceConnected && oldDeviceConnected) {
         delay(500);

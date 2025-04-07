@@ -9,7 +9,7 @@
 // Dades
 #define MAX_BUFFER_ECG  10   // 10 dades
 #define MAX_BUFFER_RR   20  // Dades que guardem de RR per fer la FFT
-#define BLE_MAX_BUF_ECG 20      // Mida de dades dels paquets a enviar per BLE
+#define BLE_MAX_BUF_ECG 30      // Mida de dades dels paquets a enviar per BLE
 
 // BLE
 #define SERVICE_UUID            "4fafc201-1fb5-459e-8fcc-c5c9c331914b"

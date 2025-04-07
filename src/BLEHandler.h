@@ -18,6 +18,22 @@ typedef struct {
     } ecg;
 } PaquetBLE;
 
+/*
+typedef struct {
+// Estructura per guardar els paquets de BLE. Per ara només conté l'ECG
+    struct {
+        float bufferECG[BLE_MAX_BUF_ECG];  // Crec q això canviarà a ser `uint` quan tinguem les dades de l'ADS (Seria més eficient tb)
+        int last;                           // primer espai lliure
+    } ecg;
+    struct {
+        float bufferRES[BLE_MAX_BUF_RES];
+        int last;
+    } res;
+    float SNS;
+    float PNS;
+    float estres;
+} PaquetBLE;*/
+
 // Funcions
 void iniciarBLE();
 void iniciarPaqBLE(PaquetBLE* pq);

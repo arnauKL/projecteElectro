@@ -1,9 +1,9 @@
-#ifndef ECG_H_
-#define ECG_H_
+#ifndef GEN_H_
+#define GEN_H_
 
-class ECGgen {
+class Sim {
 public:
-    ECGgen();
+    Sim();
     const float generarSenyalECG();
 
     float temps;
@@ -31,4 +31,4 @@ private:
     float qrs_wave_with_negatives(float t, float amplitude, float duration);
 };
 
-#endif
+#endif  // GEN_H_
