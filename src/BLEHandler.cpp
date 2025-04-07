@@ -21,7 +21,6 @@ class MyServerCallbacks : public BLEServerCallbacks {
     }
 };
 
-// Funció x iniciar el BLE
 void iniciarBLE() {
     debugln("Iniciant BLE...");
     BLEDevice::init("DEPRESP-32");
@@ -44,18 +43,23 @@ void iniciarBLE() {
     debugln("BLE iniciat i en publicació");
 }
 
-void iniciarPaqBLE(PaquetBLE* pq) {
+PaquetBLE crearPaquetBLE() {
 // Pre: paquet
-// Post: inicialitza
-    pq->ecg.last = 0;
-    debugln("pBLE iniciat");
+// Post: inicialitza el contingut
+    PaquetBLE pq;
+    pq.nEl = 0;                // iniciem a 0 elements
+    pq.PNS = 0.0;             // aquests 3 valors seran 0 fins que es calculin
+    pq.SNS = 0.0;
+    pq.estres = 0.0;
+    debugln("paquet BLE creat");
+    return pq;
 }
 
 // Funció per enviar dades per BLE
-void enviarFloatBLE(const float* data, size_t byteLength) {
+void enviarFloatBLE(const float* buf, size_t byteLength) {
 // Pre: punter al primer element d'un array de float i la mida en bytes de l'array
     if (deviceConnected) {
-        pCharacteristic->setValue((uint8_t*)data, byteLength);
+        pCharacteristic->setValue((uint8_t*)buf, byteLength);
         pCharacteristic->notify();
         debug("paquet enviat");
     }
@@ -69,20 +73,24 @@ void enviarFloatBLE(const float* data, size_t byteLength) {
     }
 }
 
-int afegirECGPaquet(PaquetBLE* pq, float valor) {
+int afegirDadesPaquet(PaquetBLE* pq, float valorECG, float valorRES) {
 // Pre: paquet inicat
 // Post: afegeix valor al paquet si hi ha espai i si no n'hi ha, envia el paquet, reinicia i afegeix el valor
     int returnval = 0;
 
     // Si hem emplenat el paquet BLE, enviar-lo i reiniciar el buffer
-    if (pq->ecg.last == BLE_MAX_BUF_ECG) {
-        enviarFloatBLE(pq->ecg.bufferECG, BLE_MAX_BUF_ECG * sizeof(pq->ecg.bufferECG[0]));   // Enviam el paquet x BLE
-        pq->ecg.last = 0;  // reiniciem el buffer
+    if (pq->nEl == BLE_MAX_BUF_ECG or pq->nEl == BLE_MAX_BUF_RES) {
+        // Això és terrible però crec que funciona: assumint que la memòria del paquet està contínua, podem enviar-ho tot calculant la mida de tot junt
+        enviarFloatBLE(pq->bufferECG, MIDA_BLE_PCKT);   // Enviam el paquet x BLE
+        pq->nEl = 0;  // reiniciem el buffer
         returnval = 1;
     }
 
-    pq->ecg.bufferECG[pq->ecg.last] = valor;
-    pq->ecg.last++;
+    pq->bufferECG[pq->nEl] = valorECG;
+    pq->bufferRES[pq->nEl] = valorRES;
+    pq->nEl++;
+
+    debugln("dades afegides al paq");
 
     return returnval;   // 0 si no s'ha enviat res, 1 si sí s'ha enviat
 }

@@ -39,6 +39,13 @@ const float Sim::generarSenyalECG() {
   return p_wave + qrs_wave + t_wave;
 }
 
+// Funció per generar senyal de Resp
+const float Sim::generarSenyalRES() {
+  // TODO: Falta afegir el super codi den Carles :D
+  float mostra = sin(0.002*temps);
+  return mostra;
+}
+
 // Ctor
 Sim::Sim() {
   randomSeed(analogRead(0));  // Funció per iniciar el generador de nombres aleatoris
