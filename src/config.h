@@ -13,8 +13,6 @@
 #define BLE_MAX_BUF_ECG 30      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
 #define BLE_MAX_BUF_RES 30      // Nombre de dades de Resp q enviem elhora en un paquet
 
-#define MIDA_BLE_PCKT ((BLE_MAX_BUF_ECG + BLE_MAX_BUF_RES + 3) * __SIZEOF_FLOAT__) // El 3 és dels 3 floats extres (SNS, PNS i estres)
-
 // Interpolació
 #define TEMPS_INTERPOLACIONS 250 // en ms, f = 4 Hz
 

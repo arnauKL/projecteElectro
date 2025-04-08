@@ -13,22 +13,25 @@ Sim gen; // Generador d'ECG x tests
 BufRR bufferRR = crearBufRR(); // Buffer x guardar els intervals RR
 BufRR bufferTimeRR = crearBufRR(); // Buffer x guardar els temps dels intervals RR
 BufRR bufferInterRR = crearBufRR(); // Buffer x guardar les interpolacions dels intervals RR
-BufRR bufferInterTimeRR = crearBufRR(); // Buffer x guardar els temps de les interpolacions fetes 
-PaquetBLE pBLE = crearPaquetBLE(); // Paquet per enviar dades per BLE
+BufRR bufferInterTimeRR = crearBufRR(); // Buffer x guardar els temps de les interpolacions fetes
+
+// Paquet per guardar les dades i enviar-les per BLE
+PaquetBLE_U pBLE_U = crearPaquetBLE_U();
 
 // Variables per rebre mostres (volatile xq poden ser canviades en un interrupt)
 volatile bool new_sample_available = false;
 volatile float ecg_sample = 0.0;
 volatile float res_sample = 0.0;
 
-//// Funció per l'interrupt de mostreig de dades ECG
-//void IRAM_ATTR onTimer() {
-//    // No hauria de fer tot això aquesta funció xq està tardant massa. Al final això igualment desapareixerà
-//    ecg_sample = gen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
-//    res_sample = gen.generarSenyalRES();  //TODO: Crear aquesta funció a partir del codi den carles
-//    new_sample_available = true;
-//    gen.temps += gen.dt;  // Avança temps simulat
-//}
+/*Tot això està comentat xq tardava molt fer-ho així i els interrupts petaven l'ESP
+// Funció per l'interrupt de mostreig de dades ECG
+void IRAM_ATTR onTimer() {
+    // No hauria de fer tot això aquesta funció xq està tardant massa. Al final això igualment desapareixerà
+    ecg_sample = gen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
+    res_sample = gen.generarSenyalRES();  //TODO: Crear aquesta funció a partir del codi den carles
+    new_sample_available = true;
+    gen.temps += gen.dt;  // Avança temps simulat
+}*/
 
 // Variables per detectar els pics RR:
 float umbral = 0.6; // Llindar simple (s'hauria de fer automàtic)
@@ -39,7 +42,6 @@ float seguent = 0;
 float llindar = 0.7;
 
 // Variable per controloar quan hem interpolat
-
 bool interpolationDone = false;
 
 //-------------------------- Programa principal --------------------------
@@ -54,7 +56,7 @@ void loop() {
     ecg_sample = gen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
     res_sample = gen.generarSenyalRES();  //TODO: Crear aquesta funció a partir del codi den carles
 
-    gen.temps += gen.dt;  // Avança temps simulat
+    gen.temps += gen.dt;  // Avança temps simulat (crec q això s ha fotut, hauria de fer algo amb millis() ara x simular el delay)
 
     debug("dades rebudes");
     debug(ecg_value);
@@ -96,6 +98,6 @@ void loop() {
     }
 
     // Afegir al paquet BLE i enviar si està ple
-    afegirDadesPaquet(&pBLE, ecg_sample, res_sample);
+    afegirDadesPaquet(&pBLE_U, ecg_sample, res_sample);
     debugln("afegides al paquet");
 }

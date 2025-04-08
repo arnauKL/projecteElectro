@@ -43,23 +43,22 @@ void iniciarBLE() {
     debugln("BLE iniciat i en publicació");
 }
 
-PaquetBLE crearPaquetBLE() {
-// Pre: paquet
-// Post: inicialitza el contingut
-    PaquetBLE pq;
-    pq.nEl = 0;                // iniciem a 0 elements
-    pq.PNS = 0.0;             // aquests 3 valors seran 0 fins que es calculin
-    pq.SNS = 0.0;
-    pq.estres = 0.0;
-    debugln("paquet BLE creat");
-    return pq;
+
+PaquetBLE_U crearPaquetBLE_U() {
+    PaquetBLE_U paquet;
+    paquet.p.nEl = 0;
+    paquet.p.nEl = 0;       // iniciem a 0 elements
+    paquet.p.PNS = 0.0;     // aquests 3 valors seran 0 fins que es calculin
+    paquet.p.SNS = 0.0;
+    paquet.p.estres = 0.0;
+    return paquet;
 }
 
 // Funció per enviar dades per BLE
-void enviarFloatBLE(const float* buf, size_t byteLength) {
+void enviarBytesBLE(uint8_t* buf, size_t byteLength) {
 // Pre: punter al primer element d'un array de float i la mida en bytes de l'array
     if (deviceConnected) {
-        pCharacteristic->setValue((uint8_t*)buf, byteLength);
+        pCharacteristic->setValue(buf, byteLength);
         pCharacteristic->notify();
         debug("paquet enviat");
     }
@@ -73,22 +72,21 @@ void enviarFloatBLE(const float* buf, size_t byteLength) {
     }
 }
 
-int afegirDadesPaquet(PaquetBLE* pq, float valorECG, float valorRES) {
+int afegirDadesPaquet(PaquetBLE_U* paq_u, float valorECG, float valorRES) {
 // Pre: paquet inicat
 // Post: afegeix valor al paquet si hi ha espai i si no n'hi ha, envia el paquet, reinicia i afegeix el valor
     int returnval = 0;
 
     // Si hem emplenat el paquet BLE, enviar-lo i reiniciar el buffer
-    if (pq->nEl == BLE_MAX_BUF_ECG or pq->nEl == BLE_MAX_BUF_RES) {
-        // Això és terrible però crec que funciona: assumint que la memòria del paquet està contínua, podem enviar-ho tot calculant la mida de tot junt
-        enviarFloatBLE(pq->bufferECG, MIDA_BLE_PCKT);   // Enviam el paquet x BLE
-        pq->nEl = 0;  // reiniciem el buffer
+    if (paq_u->p.nEl == BLE_MAX_BUF_ECG or paq_u->p.nEl == BLE_MAX_BUF_RES) {
+        enviarBytesBLE(paq_u->bytes, MIDA_TOTAL_PAQUET_BYTES);  // Enviam el paquet x BLE
+        paq_u->p.nEl = 0;  // reiniciem el buffer
         returnval = 1;
     }
 
-    pq->bufferECG[pq->nEl] = valorECG;
-    pq->bufferRES[pq->nEl] = valorRES;
-    pq->nEl++;
+    paq_u->p.bufferECG[paq_u->p.nEl] = valorECG;
+    paq_u->p.bufferRES[paq_u->p.nEl] = valorRES;
+    paq_u->p.nEl++;
 
     debugln("dades afegides al paq");
 

@@ -21,7 +21,7 @@ void calcularFFT(FFTbuffer* buff){
 // Pre: vectors dins del buffer omplerts
 // Post: vReal conté les magnituds de les freqüencies
 
-    arduinoFFT FFT = arduinoFFT();
+    ArduinoFFT<float> FFT = arduinoFFT();
     
     FFT.Windowing(buff->vReal, MAX_BUFFER_RR, FFT_WIN_TYP_HAMMING, FFT_FORWARD); // finestra
     FFT.Compute(buff->vReal, buff->vReal, MAX_BUFFER_RR, FFT_FORWARD); // càlcul
