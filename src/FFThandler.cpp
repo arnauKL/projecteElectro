@@ -5,6 +5,7 @@ FFTbuffer crearFFTbuffer(){
 
     FFTbuffer buff;
     buff.nEL = 0;
+    return buff;
 
 }
 
