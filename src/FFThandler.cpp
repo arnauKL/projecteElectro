@@ -2,10 +2,9 @@
 
 FFTbuffer crearFFTbuffer(){
 // Inicialirza el buffer
-
     FFTbuffer buff;
     buff.nEL = 0;
-
+    return buff;
 }
 
 void setArrays(float* dades, FFTbuffer* buff){

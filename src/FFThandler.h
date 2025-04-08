@@ -2,7 +2,7 @@
 #define FFThandler_H_
 
 #include "config.h"
-#include <arduinoFFT.h>
+#include "arduinoFFT.h"
 
 typedef struct{
 
@@ -20,7 +20,5 @@ void setArrays(float* dades, FFTbuffer* buff);
 
 void calcularFFT(FFTbuffer* buff);
 // Calcula la fft i opté les magnituds
-
-
 
 #endif //FFThandler_H_
