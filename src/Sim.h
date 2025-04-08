@@ -26,7 +26,13 @@ class Sim {
 
         const float _P_duration = 0.1;
         const float _QRS_duration = 0.1;
-        const float _T_duration = 0.2;    
+        const float _T_duration = 0.2;
+
+        // Paràmetres de la forma de la respiració        
+        const float resp_freq = 0.25; // Hz (15 respiracions per minut)
+        const float resp_ampl = 0.5;  // mV
+        const float resp_offset = 3.0; // mV
+
 
         float gaussian_wave(float t, float amplitude, float duration);
         float qrs_wave_with_negatives(float t, float amplitude, float duration);

@@ -41,9 +41,8 @@ const float Sim::generarSenyalECG() {
 
 // Funció per generar senyal de Resp
 const float Sim::generarSenyalRES() {
-  // TODO: Falta afegir el super codi den Carles :D
-  float mostra = sin(0.002*temps);
-  return mostra;
+  // TODO: Falta afegir el super codi den Carles :D    
+  return resp_offset + resp_ampl * sin(2 * PI * resp_freq * temps);
 }
 
 // Ctor

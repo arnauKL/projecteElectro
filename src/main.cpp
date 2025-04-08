@@ -33,7 +33,6 @@ void IRAM_ATTR onTimer() {
 }
 
 // Variables per detectar els pics RR:
-
 float umbral = 0.6; // Llindar simple (s'hauria de fer automàtic)
 unsigned long tempsUltimPic = 0;
 float anterior = 0;
@@ -45,7 +44,7 @@ float llindar = 0.7;
 
 bool interpolationDone = false;
 
-//----------------------------------------------------------------------
+//-------------------------- Programa principal --------------------------
 
 void setup() {
     Serial.begin(BAUD_RATIO);
