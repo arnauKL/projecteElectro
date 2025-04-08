@@ -5,11 +5,15 @@
 //#include "CoaCircular.h"
 #include "driver/timer.h"
 #include "RR.h"
+#include "FFThandler.h"
 
 //-------------------------- Variables globals --------------------------
 
 Sim gen; // Generador d'ECG x tests
 BufRR bufferRR = crearBufRR(); // Buffer x guardar els intervals RR
+BufRR bufferTimeRR = crearBufRR(); // Buffer x guardar els temps dels intervals RR
+BufRR bufferInterRR = crearBufRR(); // Buffer x guardar les interpolacions dels intervals RR
+BufRR bufferInterTimeRR = crearBufRR(); // Buffer x guardar els temps de les interpolacions fetes 
 PaquetBLE pBLE = crearPaquetBLE(); // Paquet per enviar dades per BLE
 
 // Variables per rebre mostres (volatile xq poden ser canviades en un interrupt)
@@ -36,6 +40,10 @@ float anterior = 0;
 float actual = 0;
 float seguent = 0;
 float llindar = 0.7;
+
+// Variable per controloar quan hem interpolat
+
+bool interpolationDone = false;
 
 //----------------------------------------------------------------------
 
@@ -83,6 +91,25 @@ void loop() {
 
             // afegim al vector d'intervals RR
             afegirRR(&bufferRR, rr);    // Aquesta funció ignora les dades si ja està ple el buffer (TODO: s'hauria de canviar)
+            afegirRR(&bufferTimeRR, tempsUltimPic); // Afegim el temps al seu vector
+        }
+
+        // Interpolem 
+        if(millis() > 120000) {// Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
+            
+            interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
+            interpolationDone = true;
+        
+        }
+
+        // FFT
+        if(interpolationDone){
+
+            FFTbuffer bufferFFT = crearFFTbuffer(); // Creem un objecte que ens permet gestionar la fft
+            setArrays(getVec(&bufferInterRR), &bufferFFT); // Introduim les dades de les interpolacions
+            calcularFFT(&bufferFFT);
+
+
         }
 
         // Afegir al paquet BLE i enviar si està ple

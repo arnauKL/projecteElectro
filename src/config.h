@@ -9,11 +9,14 @@
 
 // Dades
 #define MAX_BUFFER_ECG  10   // 10 dades
-#define MAX_BUFFER_RR   20  // Dades que guardem de RR per fer la FFT
+#define MAX_BUFFER_RR   32  // Dades que guardem de RR per fer la FFT (hauria de ser una potència de 2)
 #define BLE_MAX_BUF_ECG 30      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
 #define BLE_MAX_BUF_RES 30      // Nombre de dades de Resp q enviem elhora en un paquet
 
 #define MIDA_BLE_PCKT ((BLE_MAX_BUF_ECG + BLE_MAX_BUF_RES + 3) * __SIZEOF_FLOAT__) // El 3 és dels 3 floats extres (SNS, PNS i estres)
+
+// Interpolació
+#define TEMPS_INTERPOLACIONS 250 // en ms, f = 4 Hz
 
 // BLE
 #define SERVICE_UUID            "4fafc201-1fb5-459e-8fcc-c5c9c331914b"

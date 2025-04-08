@@ -19,5 +19,10 @@ int afegirRR(BufRR* buf, float dada);
 int detectarPicR(float mostraNova, float mostraAnt, float mostraSeg, float llindar);
 // detecta pics a partir de 3 mostres i un llindar. Retorna 1 si s'ha detectat, 0 altrament.
 
+void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR);
+// interpola dades dels pics RR per tenir mostres equiespaiades
+
+float* getVec(BufRR* buffer);
+//Retorna l'adreça del vector de l'struct 
 
 #endif // RR_H_
