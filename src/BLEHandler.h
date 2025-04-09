@@ -14,14 +14,14 @@ typedef struct {
 // Estructura per guardar els paquets de BLE. Per ara només conté l'ECG
     float bufferECG[BLE_MAX_BUF_ECG];  // Crec q això canviarà a ser `uint` quan tinguem les dades de l'ADS (Seria més eficient tb)
     float bufferRES[BLE_MAX_BUF_RES];
-    int nEl;        // nombre d'elements als buffers
     float SNS;      // Activació del simpàtic
     float PNS;      // Activació del parasimpàtic
     float estres;   // Estrés calculat
+    int nEl;        // nombre d'elements als buffers
 } PaquetBLE;
 
 // mida en bytes x poder fer la union
-#define MIDA_TOTAL_PAQUET_BYTES (sizeof(PaquetBLE))
+#define MIDA_TOTAL_PAQUET_BYTES (sizeof(PaquetBLE)-sizeof(int)) // l'int que restem és el del nombre d'elements, que no interessa enviar
 
 // union per fer el trukasso per no haver de copiar dades B)
 typedef union {
