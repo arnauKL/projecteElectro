@@ -21,4 +21,7 @@ void setArrays(float* dades, FFTbuffer* buff);
 void calcularFFT(FFTbuffer* buff);
 // Calcula la fft i opté les magnituds
 
+void computeStress(FFTbuffer* buff, float& sns, float& snp, float& stress);
+// Calcula el nivell d'estrés i mira el sistema nerviòs simpàtic i el parasimpàtic
+
 #endif //FFThandler_H_
