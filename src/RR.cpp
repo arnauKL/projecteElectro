@@ -1,4 +1,5 @@
 #include "RR.h"
+#include<Arduino.h>
 
 BufRR crearBufRR() {
 // Retorna un BufRR inicialitzat correctament
@@ -31,38 +32,50 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
 // Post: Omple el vector InterRR interpolant dades de peakRR
     
     // Les primeres interpolacions són el primer pic i el seu temps corresponent
-    afegirRR(interRR, peakRR->vec[0]);
-    afegirRR(interTimeRR, timeRR->vec[0]);
+    afegirRR(interRR, peakRR->vec[0]/1000);
+    afegirRR(interTimeRR, timeRR->vec[0]/1000);
 
     int i = 0; // Un comptador
     
     // Variables que necessitem per aplicar la fòrmula d'interpolació lineal
-    unsigned long y0 = peakRR->vec[i];
-    unsigned long y1 = peakRR->vec[i+1];
-    unsigned long x0 = timeRR->vec[i];
-    unsigned long x1 = timeRR->vec[i+1];
-    unsigned long x = x0 + TEMPS_INTERPOLACIONS;
-    unsigned long y = 0;
+    float y0 = peakRR->vec[i]/1000;
+    float y1 = peakRR->vec[i+1]/1000;
+    float x0 = timeRR->vec[i]/1000;
+    float x1 = timeRR->vec[i+1]/1000;
+    float x = (x0 + TEMPS_INTERPOLACIONS/1000);
+    float y = 0;
+    int a = 0;
 
     while(i < peakRR->nEl-1 && interRR->nEl < MAX_BUFFER_RR){ // Per tots els punts que hem recollit
+        
+        a ++;
 
         while(x < x1 && interRR->nEl < MAX_BUFFER_RR){ // Fem les interpolacions que calguin entre els dos punts
             
             afegirRR(interTimeRR, x);
             y = y0 + (y1-y0)/(x1-x0) * (x-x0); // Apliquem la fòrmula de les interpolacions
             afegirRR(interRR, y);
-            x += TEMPS_INTERPOLACIONS;
+            x += TEMPS_INTERPOLACIONS/1000;
         
         }
 
         i++;
 
         y0 = y1;
-        y1 = peakRR->vec[i+1];
+        y1 = peakRR->vec[i+1]/1000;
         x0 = x1;
-        x1 = timeRR->vec[i+1];
+        x1 = timeRR->vec[i+1]/1000;
 
     }
+
+    debugln(a);
+
+    debugln("INTERPOLACIONS");
+    for (int i = 0; i < interRR->nEl; i++) {
+        debug(interRR->vec[i]);
+        debug(", ");
+    }
+    debugln(";");
 }
 
 float* getVec(BufRR* buffer){

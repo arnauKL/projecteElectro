@@ -26,7 +26,7 @@ typedef struct {
 // union per fer el trukasso per no haver de copiar dades B)
 typedef union {
     PaquetBLE p;
-    float bytes[MIDA_TOTAL_PAQUET_BYTES]; // Dona accés a tot el paquet en forma de bytes per enviar x BLE
+    uint8_t bytes[MIDA_TOTAL_PAQUET_BYTES]; // Dona accés a tot el paquet en forma de bytes per enviar x BLE
 } PaquetBLE_U;
 
 // Funcions

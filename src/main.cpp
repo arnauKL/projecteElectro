@@ -30,8 +30,9 @@ float actual = 0;
 float seguent = 0;
 float llindar = 0.7;
 
-// Variable per controloar quan hem interpolat
+// Variable per controloar quan hem interpolat i FFT
 bool interpolationDone = false;
+bool FFTdone = false;
 
 //-------------------------- Setup de l'interrupt --------------------------
 
@@ -101,12 +102,13 @@ void loop() {
         }
     
         // FFT
-        if(interpolationDone){
+        if(interpolationDone && !FFTdone){
     
             FFTbuffer bufferFFT = crearFFTbuffer(); // Creem un objecte que ens permet gestionar la fft
             setArrays(bufferInterRR.vec, &bufferFFT); // Introduim les dades de les interpolacions
             calcularFFT(&bufferFFT);
             computeStress(&bufferFFT, pBLE_U.p.SNS, pBLE_U.p.PNS, pBLE_U.p.estres);
+            FFTdone = true;
         }
     
         // Afegir al paquet BLE i enviar si està ple

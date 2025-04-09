@@ -11,7 +11,7 @@ void setArrays(float* dades, FFTbuffer* buff){
 // Pre: dades omplert
 // Post: buff->vReal omplert i buff->vImg omplert amb 0
     for(int i=0; i<MAX_BUFFER_RR; i++){
-        buff->vReal[i] = dades[i]/1000; // 1000 per passar a segons
+        buff->vReal[i] = dades[i]; // 1000 per passar a segons
         buff->vImg[i] = 0;
         buff->nEL++;
     }
