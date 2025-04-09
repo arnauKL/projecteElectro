@@ -21,11 +21,30 @@ void calcularFFT(FFTbuffer* buff){
 // Pre: vectors dins del buffer omplerts
 // Post: vReal conté les magnituds de les freqüencies
 
-    ArduinoFFT<float> FFT = arduinoFFT();
+    ArduinoFFT<float> FFT = ArduinoFFT<float>(buff->vReal, buff->vImg, MAX_BUFFER_RR, SAMPLE_FREQ); // li passo les dades reals, imaginaries, el nombre de samples i la freq. de mostreig
     
-    FFT.Windowing(buff->vReal, MAX_BUFFER_RR, FFT_WIN_TYP_HAMMING, FFT_FORWARD); // finestra
-    FFT.Compute(buff->vReal, buff->vReal, MAX_BUFFER_RR, FFT_FORWARD); // càlcul
-    FFT.ComplexToMagnitude(buff->vReal, buff->vImg, MAX_BUFFER_RR); // extreu les magnituds
+    FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward); // finestra i direcció
+    FFT.compute(FFTDirection::Forward); // càlcul
+    FFT.complexToMagnitude(); // extreu les magnituds
+
+}
+
+void computeStress(FFTbuffer* buff, float& sns, float& snp, float& stress){
+//Pre: FFT calculada
+//Post: es calcula la potència del SNS, SNP i es calcula el nivell d'estrés
+
+    int i = 0; // comptador
+    float bin = i * (SAMPLE_FREQ/MAX_BUFFER_RR); // bin de freq. en el que ens trobem
+    while(bin < 0.4){ // 0.4 Hz és la freq. màxima que ens interessa
+
+        if(bin > 0.04 && bin < SN_LIMIT) sns += buff->vReal[i]; // LF
+        else if(bin > SN_LIMIT) snp += buff->vReal[i]; // HF
+
+        i++;
+        bin = i * (SAMPLE_FREQ/MAX_BUFFER_RR);
+    }
+    
+    stress = sns/snp;
 
 }
 

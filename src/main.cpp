@@ -44,6 +44,13 @@ float llindar = 0.7;
 // Variable per controloar quan hem interpolat
 bool interpolationDone = false;
 
+// FFT
+
+float sns = 0;
+float snp = 0;
+float stress = 0;
+
+
 //-------------------------- Programa principal --------------------------
 
 void setup() {
@@ -81,7 +88,7 @@ void loop() {
     }
 
     // Interpolem 
-    if(millis() > 120000) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
+    if(millis() > 120000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
         
         interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
         interpolationDone = true;
@@ -94,6 +101,7 @@ void loop() {
         FFTbuffer bufferFFT = crearFFTbuffer(); // Creem un objecte que ens permet gestionar la fft
         setArrays(bufferInterRR.vec, &bufferFFT); // Introduim les dades de les interpolacions
         calcularFFT(&bufferFFT);
+        computeStress(&bufferFFT, sns, snp, stress);
 
     }
 
