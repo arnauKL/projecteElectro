@@ -2,7 +2,6 @@
 #include "Sim.h"
 #include "BLEHandler.h"
 #include "config.h"
-//#include "CoaCircular.h"
 #include "driver/timer.h"
 #include "RR.h"
 #include "FFThandler.h"
@@ -23,16 +22,6 @@ volatile bool new_sample_available = false;
 volatile float ecg_sample = 0.0;
 volatile float res_sample = 0.0;
 
-
-//-------------------------- Setup de l'interrupt --------------------------
-
-hw_timer_t* timer;
-
-// Funció per l'interrupt de mostreig de dades ECG
-void IRAM_ATTR onTimer() {
-    new_sample_available = true;
-}
-
 // Variables per detectar els pics RR:
 float umbral = 0.6; // Llindar simple (s'hauria de fer automàtic)
 unsigned long tempsUltimPic = 0;
@@ -43,6 +32,15 @@ float llindar = 0.7;
 
 // Variable per controloar quan hem interpolat
 bool interpolationDone = false;
+
+//-------------------------- Setup de l'interrupt --------------------------
+
+hw_timer_t* timer;
+
+// Funció per l'interrupt de mostreig de dades ECG
+void IRAM_ATTR onTimer() {
+    new_sample_available = true;
+}
 
 //-------------------------- Programa principal --------------------------
 

@@ -32,7 +32,7 @@ typedef union {
 // Funcions
 PaquetBLE_U crearPaquetBLE_U();
 void iniciarBLE();
-void enviarBytesBLE(const float* data, size_t length);
+void enviarBytesBLE(uint8_t* data, size_t length);
 void afegirDadesPaquet(PaquetBLE_U* pq, float valorECG, float valorRES);
 
 

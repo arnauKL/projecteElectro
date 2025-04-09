@@ -15,8 +15,6 @@ void setArrays(float* dades, FFTbuffer* buff){
         buff->vImg[i] = 0;
         buff->nEL++;
     }
-
-
 }
 
 void calcularFFT(FFTbuffer* buff){

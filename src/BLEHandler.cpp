@@ -55,7 +55,7 @@ PaquetBLE_U crearPaquetBLE_U() {
 }
 
 // Funció per enviar dades per BLE
-void enviarBytesBLE(const float* buf, size_t byteLength) {
+void enviarBytesBLE(uint8_t* buf, size_t byteLength) {
 // Pre: punter al primer element d'un array de float i la mida en bytes de l'array
     if (deviceConnected) {
 
@@ -71,7 +71,7 @@ void enviarBytesBLE(const float* buf, size_t byteLength) {
         debug(",\tStress: ");
         debugln(buf[60]);   // Element 63: stress
 
-        pCharacteristic->setValue((uint8_t*)buf, byteLength);
+        pCharacteristic->setValue(buf, byteLength);
         pCharacteristic->notify();
         debugln("paquet enviat");
     }
