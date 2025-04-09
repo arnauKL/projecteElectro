@@ -7,7 +7,8 @@ class Sim {
         const float generarSenyalECG();
         const float generarSenyalRES();
 
-        volatile float temps;
+        volatile float tempsECG;
+        volatile float tempsRES;
         float dt;
         float rr_interval;
         float rr_variability;

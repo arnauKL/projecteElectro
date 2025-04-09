@@ -44,13 +44,6 @@ float llindar = 0.7;
 // Variable per controloar quan hem interpolat
 bool interpolationDone = false;
 
-// FFT
-
-float sns = 0;
-float snp = 0;
-float stress = 0;
-
-
 //-------------------------- Programa principal --------------------------
 
 void setup() {
@@ -79,10 +72,10 @@ void loop() {
         new_sample_available = false;
         interrupts();   // Re-encendre interrupts
 
-        debug("dades rebudes");
-        debug(ecg_value);
-        debug(", ");
-        debugln(res_value);
+        //debug("dades rebudes: ");
+        //debug(ecg_value);
+        //debug(", ");
+        //debugln(res_value);
     
         // Buffer cutre per trobar pics de l'ECG
         anterior = actual;
@@ -93,8 +86,8 @@ void loop() {
             unsigned long rr = millis() - tempsUltimPic;
             tempsUltimPic = millis();
     
-            Serial.print("interval RR (ms): ");
-            Serial.println(rr);
+            debug("interval RR (ms): ");
+            debugln(rr);
     
             // afegim al vector d'intervals RR
             afegirRR(&bufferRR, rr);    // Aquesta funció ignora les dades si ja està ple el buffer (TODO: s'hauria de canviar)
@@ -115,8 +108,7 @@ void loop() {
             FFTbuffer bufferFFT = crearFFTbuffer(); // Creem un objecte que ens permet gestionar la fft
             setArrays(bufferInterRR.vec, &bufferFFT); // Introduim les dades de les interpolacions
             calcularFFT(&bufferFFT);
-            computeStress(&bufferFFT, sns, snp, stress);
-    
+            computeStress(&bufferFFT, pBLE_U.p.SNS, pBLE_U.p.PNS, pBLE_U.p.estres);
         }
     
         // Afegir al paquet BLE i enviar si està ple
@@ -124,7 +116,6 @@ void loop() {
 
         // Generem la següent dada
         ecg_sample = gen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
-        res_sample = gen.generarSenyalRES();  //TODO: Crear aquesta funció a partir del codi den carles
-        gen.temps += gen.dt;  // Avança temps simulat (crec q això s ha fotut, hauria de fer algo amb millis() ara x simular el delay)    
+        res_sample = gen.generarSenyalRES();  // Generar mostra d'ECG (")
     }
 }

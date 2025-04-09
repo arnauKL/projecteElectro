@@ -25,7 +25,7 @@
 // ...
 
 // truquillo
-#define DEBUG 0     // Si posem 1, es fan els Serial.prints i si posem 0 s'eliminen
+#define DEBUG 1     // Si posem 1, es fan els Serial.prints i si posem 0 s'eliminen
 
 #if DEBUG == 1
 #define debug(x) Serial.print(x)

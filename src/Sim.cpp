@@ -1,4 +1,5 @@
 #include "Sim.h"
+#include "config.h"
 #include <cmath>
 #include <Arduino.h>
 
@@ -20,36 +21,44 @@ const float Sim::generarSenyalECG() {
   float qrs_wave = 0.0;
   float t_wave = 0.0;
 
-  if (temps < _P_duration) {
-    p_wave = gaussian_wave(temps, _P_amp, _P_duration);
+  if (tempsECG < _P_duration) {
+    p_wave = gaussian_wave(tempsECG, _P_amp, _P_duration);
   }
 
-  if (temps >= _P_duration && temps < _P_duration + _QRS_duration) {
-    qrs_wave = qrs_wave_with_negatives(temps - _P_duration, _QRS_amp, _QRS_duration);
+  if (tempsECG >= _P_duration && tempsECG < _P_duration + _QRS_duration) {
+    qrs_wave = qrs_wave_with_negatives(tempsECG - _P_duration, _QRS_amp, _QRS_duration);
   }
 
-  if (temps >= _P_duration + _QRS_duration && temps < _P_duration + _QRS_duration + _T_duration) {
-    t_wave = gaussian_wave(temps - _P_duration - _QRS_duration, _T_amp, _T_duration);
+  if (tempsECG >= _P_duration + _QRS_duration && tempsECG < _P_duration + _QRS_duration + _T_duration) {
+    t_wave = gaussian_wave(tempsECG - _P_duration - _QRS_duration, _T_amp, _T_duration);
   }
 
   rr_interval = 60.0 / _heart_rate * (1 + random(-rr_variability * 100, rr_variability * 100) / 100.0);
 
-  if (temps >= rr_interval) { temps = 0.0; }
-
+  tempsECG += dt;
+  if (tempsECG >= rr_interval) { tempsECG = 0.0; }
   return p_wave + qrs_wave + t_wave;
 }
 
 // Funció per generar senyal de Resp
 const float Sim::generarSenyalRES() {
-  // TODO: Falta afegir el super codi den Carles :D    
-  return resp_offset + resp_ampl * sin(2 * PI * resp_freq * temps);
+  tempsRES += dt;
+
+  if (tempsRES > 4.0) {   // 4.0 és el temps que tarda en fer una ona completa
+    tempsRES = 0.0;
+    debug("temps RES resetejat: ");
+    debugln(tempsRES);
+  }
+
+  return resp_offset + resp_ampl * sin(2 * PI * resp_freq * tempsRES);
 }
 
 // Ctor
 Sim::Sim() {
   randomSeed(analogRead(0));  // Funció per iniciar el generador de nombres aleatoris
-  fs = 500.0;
-  temps = 0.0;
+  fs = 250.0;
+  tempsECG = 0.0;
+  tempsRES = 0.0;
   dt = 1.0 / fs;
   rr_interval = 60.0 / _heart_rate;
   rr_variability = 0.05;
