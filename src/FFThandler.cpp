@@ -21,11 +21,13 @@ void calcularFFT(FFTbuffer* buff){
 // Pre: vectors dins del buffer omplerts
 // Post: vReal conté les magnituds de les freqüencies
 
-    ArduinoFFT<float> FFT = arduinoFFT();
+    float samplingFrequency = 1/(TEMPS_INTERPOLACIONS/1000); // freq. de mostreig, la que faig servir per les interpolacions
+
+    ArduinoFFT<float> FFT = ArduinoFFT<float>(buff->vReal, buff->vImg, MAX_BUFFER_RR, samplingFrequency); // li passo les dades reals, imaginaries, el nombre de samples i la freq. de mostreig
     
-    FFT.Windowing(buff->vReal, MAX_BUFFER_RR, FFT_WIN_TYP_HAMMING, FFT_FORWARD); // finestra
-    FFT.Compute(buff->vReal, buff->vReal, MAX_BUFFER_RR, FFT_FORWARD); // càlcul
-    FFT.ComplexToMagnitude(buff->vReal, buff->vImg, MAX_BUFFER_RR); // extreu les magnituds
+    FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward); // finestra i direcció
+    FFT.compute(FFTDirection::Forward); // càlcul
+    FFT.complexToMagnitude(); // extreu les magnituds
 
 }
 

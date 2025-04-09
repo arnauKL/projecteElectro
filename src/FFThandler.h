@@ -6,8 +6,8 @@
 
 typedef struct{
 
-    double vReal[MAX_BUFFER_RR]; // Part real, on van les dades a transformar, funciona de in i out
-    double vImg[MAX_BUFFER_RR]; // Part imaginària
+    float vReal[MAX_BUFFER_RR]; // Part real, on van les dades a transformar, funciona de in i out
+    float vImg[MAX_BUFFER_RR]; // Part imaginària
     int nEL; // Nombre d'elements
 
 } FFTbuffer; // Per gestionar tot el tema de la fft
