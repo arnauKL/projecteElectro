@@ -32,8 +32,8 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
 // Post: Omple el vector InterRR interpolant dades de peakRR
     
     // Les primeres interpolacions són el primer pic i el seu temps corresponent
-    afegirRR(interRR, peakRR->vec[0]/1000);
-    afegirRR(interTimeRR, timeRR->vec[0]/1000);
+    afegirRR(interRR, peakRR->vec[1]/1000);
+    afegirRR(interTimeRR, timeRR->vec[1]/1000);
 
     int i = 0; // Un comptador
     
@@ -45,6 +45,11 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
     float x = (x0 + TEMPS_INTERPOLACIONS/1000);
     float y = 0;
     int a = 0;
+
+    debugln(x);
+    debugln(x0);
+    debugln(TEMPS_INTERPOLACIONS/1000);
+    debugln(x1);
 
     while(i < peakRR->nEl-1 && interRR->nEl < MAX_BUFFER_RR){ // Per tots els punts que hem recollit
         
@@ -69,6 +74,7 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
     }
 
     debugln(a);
+    
 
     debugln("INTERPOLACIONS");
     for (int i = 0; i < interRR->nEl; i++) {
