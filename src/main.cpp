@@ -94,7 +94,7 @@ void loop() {
         }
     
         // Interpolem 
-        if(millis() > 120000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
+        if(millis() > 150000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
             
             interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
             interpolationDone = true;

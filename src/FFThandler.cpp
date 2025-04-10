@@ -23,14 +23,14 @@ void calcularFFT(FFTbuffer* buff){
 
     float samples = MAX_BUFFER_RR;
 
-    ArduinoFFT<float> FFT = ArduinoFFT<float>(buff->vReal, buff->vImg, samples, SAMPLE_FREQ); // li passo les dades reals, imaginaries, el nombre de samples i la freq. de mostreig
+    ArduinoFFT<float> FFT = ArduinoFFT<float>(buff->vReal, buff->vImg, samples, (float)SAMPLE_FREQ); // li passo les dades reals, imaginaries, el nombre de samples i la freq. de mostreig
     
     FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward); // finestra i direcció
     FFT.compute(FFTDirection::Forward); // càlcul
     FFT.complexToMagnitude(); // extreu les magnituds
 
     for (int i = 0; i < buff->nEL; i++) {
-        debug(buff->vReal[i]);
+        debug(buff->vReal[i]); 
         debug(", ");
     }
     debugln(";");

@@ -32,18 +32,19 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
 // Post: Omple el vector InterRR interpolant dades de peakRR
     
     // Les primeres interpolacions són el primer pic i el seu temps corresponent
-    afegirRR(interRR, peakRR->vec[1]/1000);
-    afegirRR(interTimeRR, timeRR->vec[1]/1000);
+    afegirRR(interRR, peakRR->vec[0]/1000);
+    afegirRR(interTimeRR, timeRR->vec[0]);
 
     int i = 0; // Un comptador
     
     // Variables que necessitem per aplicar la fòrmula d'interpolació lineal
     float y0 = peakRR->vec[i]/1000;
     float y1 = peakRR->vec[i+1]/1000;
-    float x0 = timeRR->vec[i]/1000;
-    float x1 = timeRR->vec[i+1]/1000;
-    float x = (x0 + TEMPS_INTERPOLACIONS/1000);
+    float x0 = timeRR->vec[i];
+    float x1 = timeRR->vec[i+1];
+    float x = (x0 + TEMPS_INTERPOLACIONS);
     float y = 0;
+    
     int a = 0;
 
     debugln(x);
@@ -60,7 +61,7 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
             afegirRR(interTimeRR, x);
             y = y0 + (y1-y0)/(x1-x0) * (x-x0); // Apliquem la fòrmula de les interpolacions
             afegirRR(interRR, y);
-            x += TEMPS_INTERPOLACIONS/1000;
+            x += TEMPS_INTERPOLACIONS;
         
         }
 
@@ -69,12 +70,12 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
         y0 = y1;
         y1 = peakRR->vec[i+1]/1000;
         x0 = x1;
-        x1 = timeRR->vec[i+1]/1000;
+        x1 = timeRR->vec[i+1];
 
     }
 
     debugln(a);
-    
+    debugln(interRR->nEl);
 
     debugln("INTERPOLACIONS");
     for (int i = 0; i < interRR->nEl; i++) {
