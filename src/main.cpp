@@ -6,6 +6,8 @@
 #include "RR.h"
 #include "FFThandler.h"
 
+// Comentari per provar si m funcionen els git push
+
 //-------------------------- Variables globals --------------------------
 
 Sim gen; // Generador d'ECG x tests
