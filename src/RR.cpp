@@ -20,12 +20,24 @@ int afegirRR(BufRR* buf, float dada) {
     return 0;
 }
 
-int detectarPicR(float mostraNova, float mostraAnt, float mostraSeg, float llindar) {
+bool detectarPicR(const float & mostraNova, const float & mostraAnt, const float & mostraSeg, const float & llindar) {
 // Pre: "buffer" cutre; Post: retorna cert si hi ha un pic
     return (mostraAnt < mostraNova &&
             mostraNova > mostraSeg &&
             mostraNova > llindar);
 }
+
+bool detectarPicRdinamic(const float & mostraNova, const float & mostraAnt, const float & mostraSeg, float & llindarDinamic) {
+// detecta pics a partir de 3 mostres i un llindar. Retorna 1 si s'ha detectat, 0 altrament.
+    if (mostraNova > mostraAnt && mostraNova > mostraSeg && mostraNova > llindarDinamic) {
+        // actualitzar llindar dinàmic
+        llindarDinamic = THRESHOLD_BIAS * mostraNova;
+        return true;
+    }
+    llindarDinamic *= 0.999;   // Una mica d decay (no sé si cal, segons el soroll que tingui el senyal final)
+    return false;
+}
+
 
 void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR){
 // Pre: quatre adreces de BufRR, ha passat un cert temps 
@@ -83,10 +95,4 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
         debug(", ");
     }
     debugln(";");
-}
-
-float* getVec(BufRR* buffer){
-// Pre: buffer amb un vector ompler
-// Post: retorna l'adreça del vector
-    return buffer->vec;
 }

@@ -59,21 +59,21 @@ void enviarBytesBLE(uint8_t* buf, size_t byteLength) {
 // Pre: punter al primer element d'un array de float i la mida en bytes de l'array
     if (deviceConnected) {
 
-        debug("L'element 29 (ecg): ");
-        debug(buf[29]);
-        debug(", i el 59 (res): ");
-        debugln(buf[59]);
+        //debug("L'element 29 (ecg): ");
+        //debug(buf[29]);
+        //debug(", i el 59 (res): ");
+        //debugln(buf[59]);
 
-        debug("SNS: ");
-        debug(buf[60]);   // Element 61: SNS
-        debug(",\tPNS: ");
-        debug(buf[60]);   // Element 62: PNS
-        debug(",\tStress: ");
-        debugln(buf[60]);   // Element 63: stress
+        //debug("SNS: ");
+        //debug(buf[60]);   // Element 61: SNS
+        //debug(",\tPNS: ");
+        //debug(buf[60]);   // Element 62: PNS
+        //debug(",\tStress: ");
+        //debugln(buf[60]);   // Element 63: stress
 
         pCharacteristic->setValue(buf, byteLength);
         pCharacteristic->notify();
-        debugln("paquet enviat");
+        //debugln("paquet enviat");
     }
     if (!deviceConnected && oldDeviceConnected) {
         delay(500);

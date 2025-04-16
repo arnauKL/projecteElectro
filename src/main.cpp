@@ -25,12 +25,11 @@ volatile float ecg_sample = 0.0;
 volatile float res_sample = 0.0;
 
 // Variables per detectar els pics RR:
-float umbral = 0.6; // Llindar simple (s'hauria de fer automàtic)
 unsigned long tempsUltimPic = 0;
 float anterior = 0;
 float actual = 0;
 float seguent = 0;
-float llindar = 0.7;
+float llindar = 0.7;    // Llindar simple (s'hauria de fer automàtic)
 
 // Variable per controloar quan hem interpolat i FFT
 bool interpolationDone = false;
@@ -83,7 +82,7 @@ void loop() {
         actual = seguent;
         seguent = ecg_value;
     
-        if (detectarPicR(actual, anterior, seguent, llindar) == 1) {
+        if (detectarPicRdinamic(actual, anterior, seguent, llindar)) {
             unsigned long rr = millis() - tempsUltimPic;
             tempsUltimPic = millis();
     
@@ -97,7 +96,7 @@ void loop() {
     
         // Interpolem 
         if(millis() > 150000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
-            
+            //        ^^^^^^ we don't do that here
             interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
             interpolationDone = true;
         
@@ -116,7 +115,7 @@ void loop() {
         // Afegir al paquet BLE i enviar si està ple
         afegirDadesPaquet(&pBLE_U, ecg_value, res_value);
 
-        // Generem la següent dada
+        // Generem la següent dada (això a la versió final no existirà)
         ecg_sample = gen.generarSenyalECG();  // Generar mostra (simula mostra arribada de l'ADS)
         res_sample = gen.generarSenyalRES();  // Generar mostra d'ECG (")
     }

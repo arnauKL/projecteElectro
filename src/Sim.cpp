@@ -46,8 +46,8 @@ const float Sim::generarSenyalRES() {
 
   if (tempsRES > 4.0) {   // 4.0 és el temps que tarda en fer una ona completa
     tempsRES = 0.0;
-    debug("temps RES resetejat: ");
-    debugln(tempsRES);
+    //debug("temps RES resetejat: ");
+    //debugln(tempsRES);
   }
 
   return resp_offset + resp_ampl * sin(2 * PI * resp_freq * tempsRES);
