@@ -26,6 +26,22 @@
 #define MIN_PIC_INTERVAL 200  // samples (depends on sampling rate)
 #define THRESHOLD_BIAS 0.6f
 
+// SPI 
+// Comandes de l'ADS1292R
+#define CMD_READ_REG 0x20
+#define CMD_STOP 0x0A
+#define CMD_SDATAC 0x11
+#define CMD_RESET 0x06
+
+// Pins SPI
+#define ADS1292_MISO 19
+#define ADS1292_MOSI 23
+#define ADS1292_CS_PIN 5
+#define ADS1292_SCK 18
+#define ADS1292_DRDY_PIN 4
+#define ADS1292_START_PIN 16
+#define ADS1292_PWDN_PIN 17
+
 // ...
 
 // truquillo
