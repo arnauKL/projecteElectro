@@ -13,6 +13,12 @@
 #define BLE_MAX_BUF_ECG 30      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
 #define BLE_MAX_BUF_RES 30      // Nombre de dades de Resp q enviem elhora en un paquet
 
+
+// Detecció de pics R
+#define THRESHOLD_BIAS      0.8f
+#define SOROLL_SIM          0.1     // Soroll (percent) del senyal simulat (per provar robustesa de l'algo d detecció d pics)
+#define MIN_INTERVAL_PICS   200     // ms mínims entre un pic i el següent (potser enlloc de ms és millor contar mostres?)
+
 // Interpolació i FFT
 #define TEMPS_INTERPOLACIONS 250.0 // en ms, f = 4 Hz
 #define SAMPLE_FREQ 4.0 // f = 4 Hz
@@ -21,10 +27,6 @@
 // BLE
 #define SERVICE_UUID            "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID     "beb5483e-36e1-4688-b7f5-ea07361b26a8"
-
-// Detecció de pics R
-#define MIN_PIC_INTERVAL 200  // samples (depends on sampling rate)
-#define THRESHOLD_BIAS 0.6f
 
 // SPI 
 // Comandes de l'ADS1292R

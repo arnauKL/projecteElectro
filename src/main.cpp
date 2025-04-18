@@ -85,13 +85,16 @@ void loop() {
         if (detectarPicRdinamic(actual, anterior, seguent, llindar)) {
             unsigned long rr = millis() - tempsUltimPic;
             tempsUltimPic = millis();
-    
-            debug("interval RR (ms): ");
-            debugln(rr);
-    
-            // afegim al vector d'intervals RR
-            afegirRR(&bufferRR, rr);    // Aquesta funció ignora les dades si ja està ple el buffer (TODO: s'hauria de canviar)
-            afegirRR(&bufferTimeRR, tempsUltimPic); // Afegim el temps al seu vector
+
+
+            if (rr >= MIN_INTERVAL_PICS) {  // Marge per no detectar el mateix pic dos cops (soroll)
+                debug("interval RR (ms): ");
+                debugln(rr);
+        
+                // afegim al vector d'intervals RR
+                afegirRR(&bufferRR, rr);    // Aquesta funció ignora les dades si ja està ple el buffer (TODO: s'hauria de canviar)
+                afegirRR(&bufferTimeRR, tempsUltimPic); // Afegim el temps al seu vector
+            }
         }
     
         // Interpolem 
