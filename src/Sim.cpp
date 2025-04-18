@@ -37,7 +37,7 @@ const float Sim::generarSenyalECG() {
 
   tempsECG += dt;
   if (tempsECG >= rr_interval) { tempsECG = 0.0; }
-  return p_wave + qrs_wave + t_wave;
+  return p_wave + qrs_wave + t_wave + random(-factor_soroll, factor_soroll);  // He afegit un component de soroll per provar la detecció de pics
 }
 
 // Funció per generar senyal de Resp
@@ -46,8 +46,6 @@ const float Sim::generarSenyalRES() {
 
   if (tempsRES > 4.0) {   // 4.0 és el temps que tarda en fer una ona completa
     tempsRES = 0.0;
-    //debug("temps RES resetejat: ");
-    //debugln(tempsRES);
   }
 
   return resp_offset + resp_ampl * sin(2 * PI * resp_freq * tempsRES);

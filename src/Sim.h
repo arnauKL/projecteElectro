@@ -34,6 +34,8 @@ class Sim {
         const float resp_ampl = 0.5;  // mV
         const float resp_offset = 3.0; // mV
 
+        const float factor_soroll = 0.1;    // Soroll simulat del senyal per provar l'algorisme de detecció de pics
+
 
         float gaussian_wave(float t, float amplitude, float duration);
         float qrs_wave_with_negatives(float t, float amplitude, float duration);
