@@ -35,6 +35,4 @@ void iniciarBLE();
 void enviarBytesBLE(uint8_t* data, size_t length);
 void afegirDadesPaquet(PaquetBLE_U* pq, float valorECG, float valorRES);
 
-
-
 #endif
