@@ -4,12 +4,10 @@
 #include "FFThandler.h"
 #include "SPIhandler.h"
 #include "RR.h"
-//#include "Sim.h"
 #include "config.h"
 
 //-------------------------- Variables globals --------------------------
 
-//Sim gen; // Generador d'ECG x tests
 BufRR bufferRR = crearBufRR();              // Buffer x guardar els intervals RR
 BufRR bufferTimeRR = crearBufRR();          // Buffer x guardar els temps dels intervals RR
 BufRR bufferInterRR = crearBufRR();         // Buffer x guardar les interpolacions dels intervals RR
@@ -17,11 +15,8 @@ BufRR bufferInterTimeRR = crearBufRR();     // Buffer x guardar els temps de les
 
 PaquetBLE_U pBLE_U = crearPaquetBLE_U();    // Paquet per guardar les dades i enviar-les per BLE
 
-// Variables per rebre mostres (volatile xq poden ser canviades en un interrupt)
+// Variable per rebre mostres (volatile xq pot ser canviada en un interrupt)
 volatile bool newSampleAvailable = false;
-uint32_t ecgSample = 0;
-uint32_t resSample = 0;
-
 
 // Variables per detectar els pics RR:
 unsigned long tempsUltimPic = 0;
@@ -35,7 +30,7 @@ bool interpolationDone = false;
 bool FFTdone = false;
 
 //-------------------------- Setup de l'interrupt --------------------------
-void IRAM_ATTR onDRDY() {   // TODO: entendre exactament perquè IRAM_ATTR
+void IRAM_ATTR onDRDY() {
 // Quan DRDY s'activi, l'interrupt posa "new_sample_available" a cert x després llegir al loop()
     newSampleAvailable = true;
 }
@@ -45,7 +40,7 @@ float convertirAmV(uint32_t sampleRaw) {
 // Passa els valors donats de l'ADS a mV
     return (sampleRaw * (2.0 * V_REF / GAIN)) / (2.0 * TWO_POW_23) * 1000.0;
 }
-
+// TODO: comprovar aquesta fòrmula
 
 //-------------------------- Programa principal --------------------------
 void setup() {
@@ -121,7 +116,7 @@ void loop() {
 
         // Interpolem 
         if(millis() > 150000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
-            //        ^^^^^^ we don't do that here
+
             interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
             interpolationDone = true;
         
@@ -130,8 +125,8 @@ void loop() {
         // FFT
         if(interpolationDone && !FFTdone){
     
-            FFTbuffer bufferFFT = crearFFTbuffer(); // Creem un objecte que ens permet gestionar la fft
-            setArrays(bufferInterRR.vec, &bufferFFT); // Introduim les dades de les interpolacions
+            FFTbuffer bufferFFT = crearFFTbuffer();     // Creem un objecte que ens permet gestionar la fft
+            setArrays(bufferInterRR.vec, &bufferFFT);   // Introduim les dades de les interpolacions
             calcularFFT(&bufferFFT);
             computeStress(&bufferFFT, pBLE_U.p.SNS, pBLE_U.p.PNS, pBLE_U.p.estres);
             FFTdone = true;

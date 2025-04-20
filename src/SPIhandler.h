@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-// Estructura per guardar les dades parsejades de l'ADS
+// Estructura per guardar les dades parsejades de l'ADS per SPI
 typedef struct {
     uint32_t bitsStatus;
     int32_t ecgSample;
@@ -24,12 +24,11 @@ void SPIsetup(); // Fem el setup que necessita el nostre ADS
 
 bool SPIcomprovarID(); // Fa tres intents per connectar-se a un ID vàlid
 
-
-// FALTA: LLEGIR DADES DE LES QUE TRAIEM DE LA RESP I ECG I POSAR-HO AL MAIN
-
 void readADS1292RData(uint8_t *buffer);
+// Llegeix les dades de l'ADS per SPI
 
 ADS1292R_Data parseADS1292RData(uint8_t *buffer);
+// Un cop carregades les dades per SPI, retorna un objecte amb les dades parsejades
 
 
 /** RECORDAR
