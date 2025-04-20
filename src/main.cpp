@@ -36,11 +36,15 @@ void IRAM_ATTR onDRDY() {
 }
 
 //-------------------------- Funcions per parsejar --------------------------
-float convertirAmV(uint32_t sampleRaw) {
-// Passa els valors donats de l'ADS a mV
-    return (sampleRaw * (2.0 * V_REF / GAIN)) / (2.0 * TWO_POW_23) * 1000.0;
+inline float convertirAmVecg(uint32_t sampleRaw) {  // inline x veure si el compilador l'optimitza
+// Passa els valors d'ECG l'ADS a mV
+    return 1000.0 * (sampleRaw * (V_REF / (GAIN_ECG * TWO_POW_23)));    // *1000 per passar a mV
 }
-// TODO: comprovar aquesta fòrmula
+
+inline float convertirAmVres(uint32_t sampleRaw) {
+// Passa els valors de respiració de l'ADS a mV
+    return 1000.0 * (sampleRaw * (V_REF / (GAIN_RES * TWO_POW_23)));
+}
 
 //-------------------------- Programa principal --------------------------
 void setup() {
@@ -83,8 +87,8 @@ void loop() {
         sensorData = parseADS1292RData(spiData);
 
         // Convertir a floats (mV)
-        float ecgValue = convertirAmV(sensorData.ecgSample);
-        float resValue = convertirAmV(sensorData.resSample);
+        float ecgValue = convertirAmVecg(sensorData.ecgSample);
+        float resValue = convertirAmVres(sensorData.resSample);
 
         debug("dades rebudes: ");
         debug(ecgValue);
@@ -101,7 +105,6 @@ void loop() {
             unsigned long rr = millis() - tempsUltimPic;
             tempsUltimPic = millis();
 
-
             if (rr >= MIN_INTERVAL_PICS) {  // Marge per no detectar el mateix pic dos cops (soroll)
                 debug("interval RR (ms): ");
                 debugln(rr);
@@ -115,7 +118,7 @@ void loop() {
         // -------------- Intepolació i FFT --------------
 
         // Interpolem 
-        if(millis() > 150000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
+        if (millis() > 150000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
 
             interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
             interpolationDone = true;
@@ -123,7 +126,7 @@ void loop() {
         }
     
         // FFT
-        if(interpolationDone && !FFTdone){
+        if (interpolationDone && !FFTdone){
     
             FFTbuffer bufferFFT = crearFFTbuffer();     // Creem un objecte que ens permet gestionar la fft
             setArrays(bufferInterRR.vec, &bufferFFT);   // Introduim les dades de les interpolacions

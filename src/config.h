@@ -50,7 +50,8 @@
 
 // Per convertir de int32_t a mV
 #define V_REF       2.42    // V (Vref)
-#define GAIN        6       // Gain del PGA
+#define GAIN_ECG    4       // Gain del PGA
+#define GAIN_RES    8       // Gain del PGA
 #define TWO_POW_23  8388608 // = 2^23 (així no cal calcular cada cop)
 
 /**

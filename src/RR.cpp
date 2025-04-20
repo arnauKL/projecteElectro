@@ -20,16 +20,17 @@ int afegirRR(BufRR* buf, float dada) {
     return 0;
 }
 
+// Funció deprecada
 bool detectarPicR(const float & mostraNova, const float & mostraAnt, const float & mostraSeg, const float & llindar) {
-// Pre: "buffer" cutre; Post: retorna cert si hi ha un pic
-    return (mostraAnt < mostraNova &&
-            mostraNova > mostraSeg &&
-            mostraNova > llindar);
+// Pre: buffer de 3 mostres; Post: retorna cert si hi ha un pic que supera el llindar estàtic
+    return (mostraNova > llindar &&
+            mostraAnt < mostraNova &&
+            mostraNova > mostraSeg);
 }
 
 bool detectarPicRdinamic(const float & mostraNova, const float & mostraAnt, const float & mostraSeg, float & llindarDinamic) {
-// detecta pics a partir de 3 mostres i un llindar. Retorna 1 si s'ha detectat, 0 altrament.
-    if (mostraNova > mostraAnt && mostraNova > mostraSeg && mostraNova > llindarDinamic) {
+// detecta pics a partir de 3 mostres i un llindar. Retorna 1 si s'ha detectat, 0 altrament; ajusta el llindar dinàmic
+    if (mostraNova > llindarDinamic && mostraNova > mostraAnt && mostraNova > mostraSeg) {
         // actualitzar llindar dinàmic
         llindarDinamic = THRESHOLD_BIAS * mostraNova;
         return true;
@@ -37,7 +38,6 @@ bool detectarPicRdinamic(const float & mostraNova, const float & mostraAnt, cons
     llindarDinamic *= 0.999;   // Una mica d decay (no sé si cal, segons el soroll que tingui el senyal final)
     return false;
 }
-
 
 void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR){
 // Pre: quatre adreces de BufRR, ha passat un cert temps 
