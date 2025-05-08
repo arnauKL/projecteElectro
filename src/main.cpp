@@ -79,31 +79,42 @@ void loop() {
         noInterrupts(); // Apagar interrupts per copiar dades en memòria compartida
         newSampleAvailable = false;
         interrupts(); // Re-encendre interrupts
+        debugln("DRDY LOW");
 
         uint8_t spiData[9];
         ADS1292R_Data sensorData;
       
+
         readADS1292RData(spiData);
+        debugln("dades llegides de SPI");
         sensorData = parseADS1292RData(spiData);
+
+        debugln("dades parsejades");        
 
         // Convertir a floats (mV)
         float ecgValue = convertirAmVecg(sensorData.ecgSample);
         float resValue = convertirAmVres(sensorData.resSample);
+        debugln("dades convertides a mV:")
 
-        debug("dades rebudes: ");
+        //debug(sensorData.ecgSample);
         debug(ecgValue);
         debug(", ");
+        //debugln(sensorData.resSample);
         debugln(resValue);
+
     
         // -------------- Detecció de pics R --------------
         // sliding buffer per trobar pics de l'ECG
         anterior = actual;
         actual = seguent;
         seguent = ecgValue;
-    
+        //seguent = sensorData.ecgSample;
+
         if (detectarPicRdinamic(actual, anterior, seguent, llindar)) {
             unsigned long rr = millis() - tempsUltimPic;
             tempsUltimPic = millis();
+
+            debugln("pic trobat");
 
             if (rr >= MIN_INTERVAL_PICS) {  // Marge per no detectar el mateix pic dos cops (soroll)
                 debug("interval RR (ms): ");
@@ -137,5 +148,7 @@ void loop() {
     
         // -------------- BLE --------------
         afegirDadesPaquet(&pBLE_U, ecgValue, resValue);   // Afegeix al paquet BLE i envia si està ple
+        //afegirDadesPaquet(&pBLE_U, sensorData.ecgSample, sensorData.resSample);   // Afegeix al paquet BLE i envia si està ple
+        debugln("dades afegides al paq BLE");
     }
 }

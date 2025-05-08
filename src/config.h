@@ -33,7 +33,9 @@
 #define CMD_READ_REG    0x20
 #define CMD_STOP        0x0A
 #define CMD_SDATAC      0x11
+#define CMD_RDATAC      0x10
 #define CMD_RESET       0x06
+#define CMD_START       0x08
 
 // Pins SPI
 #define ADS1292_MISO        19
@@ -60,7 +62,7 @@
  * pel seu Serial corresponent, i quan DEBUG sigui falsa (0), es substitueix per
  * res, és a dir, s'elimina.
  */
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG == 1  // Mode debug, mostrem per serial
 #define debug(x) Serial.print(x)
