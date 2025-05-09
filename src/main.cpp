@@ -55,8 +55,10 @@ void setup() {
     delay(1000);
 
     // -------------- Setup del BLE --------------
+    #ifdef ACTIVAR_BLE
     iniciarBLE(); // Iniciem la comunicació x BLE
     debugln("BLE iniciat");
+    #endif
 
     // -------------- Setup del SPI --------------
     SPIsetup();
@@ -81,11 +83,10 @@ void loop() {
         interrupts(); // Re-encendre interrupts
         debugln("DRDY LOW");
 
-        uint8_t spiData[9];
-        ADS1292R_Data sensorData;
+        uint8_t spiData[9];         // 9 bytes --> 72 bits / 8 bitsperbyte
+        ADS1292R_Data sensorData;   // Struct per re-ordenar els bytes
       
-
-        readADS1292RData(spiData);
+        readADS1292RData(spiData);  
         debugln("dades llegides de SPI");
         sensorData = parseADS1292RData(spiData);
 
@@ -94,8 +95,8 @@ void loop() {
         // Convertir a floats (mV)
         float ecgValue = convertirAmVecg(sensorData.ecgSample);
         float resValue = convertirAmVres(sensorData.resSample);
-        debugln("dades convertides a mV:")
 
+        debugln("dades convertides a mV:");
         //debug(sensorData.ecgSample);
         debug(ecgValue);
         debug(", ");
@@ -145,10 +146,12 @@ void loop() {
             computeStress(&bufferFFT, pBLE_U.p.SNS, pBLE_U.p.PNS, pBLE_U.p.estres);
             FFTdone = true;
         }
-    
+        
+        #ifdef ACTIVAR_BLE
         // -------------- BLE --------------
         afegirDadesPaquet(&pBLE_U, ecgValue, resValue);   // Afegeix al paquet BLE i envia si està ple
         //afegirDadesPaquet(&pBLE_U, sensorData.ecgSample, sensorData.resSample);   // Afegeix al paquet BLE i envia si està ple
         debugln("dades afegides al paq BLE");
+        #endif
     }
 }

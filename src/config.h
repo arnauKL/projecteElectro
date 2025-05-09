@@ -62,7 +62,7 @@
  * pel seu Serial corresponent, i quan DEBUG sigui falsa (0), es substitueix per
  * res, és a dir, s'elimina.
  */
-#define DEBUG 0
+#define DEBUG 1
 
 #if DEBUG == 1  // Mode debug, mostrem per serial
 #define debug(x) Serial.print(x)
@@ -73,5 +73,8 @@
 #define debugln(x)
 #define debugbegin(x)
 #endif
+
+// Per poder anar provant incrementalment i executar el codi per parts:
+//#define ACTIVAR_BLE // fem servir BLE
 
 #endif
