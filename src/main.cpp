@@ -29,6 +29,11 @@ float llindar = 0.7;    // Llindar automàtic ( anirà variant segons els darrer
 bool interpolationDone = false;
 bool FFTdone = false;
 
+////-------------------------- Setup dels cores --------------------------
+//TaskHandle_t Tasca1;
+//TaskHandle_t Tasca2;
+
+
 //-------------------------- Setup de l'interrupt --------------------------
 void IRAM_ATTR onDRDY() {
 // Quan DRDY s'activi, l'interrupt posa "new_sample_available" a cert x després llegir al loop()
@@ -56,7 +61,8 @@ void setup() {
 
     // -------------- Setup del BLE --------------
     #ifdef ACTIVAR_BLE
-    iniciarBLE(); // Iniciem la comunicació x BLE
+    //iniciarBLE(); // Iniciem la comunicació x BLE
+    iniciarBLEAmbTask();
     debugln("BLE iniciat");
     #endif
 
@@ -81,27 +87,32 @@ void loop() {
         noInterrupts(); // Apagar interrupts per copiar dades en memòria compartida
         newSampleAvailable = false;
         interrupts(); // Re-encendre interrupts
-        debugln("DRDY LOW");
+        //debugln("DRDY LOW");
 
         uint8_t spiData[9];         // 9 bytes --> 72 bits / 8 bitsperbyte
         ADS1292R_Data sensorData;   // Struct per re-ordenar els bytes
       
         readADS1292RData(spiData);  
-        debugln("dades llegides de SPI");
+        //debugln("dades llegides de SPI");
         sensorData = parseADS1292RData(spiData);
 
-        debugln("dades parsejades");        
+        //debugln("dades parsejades");        
 
         // Convertir a floats (mV)
         float ecgValue = convertirAmVecg(sensorData.ecgSample);
         float resValue = convertirAmVres(sensorData.resSample);
 
-        debugln("dades convertides a mV:");
-        //debug(sensorData.ecgSample);
-        debug(ecgValue);
-        debug(", ");
-        //debugln(sensorData.resSample);
-        debugln(resValue);
+        //debugln("dades convertides a mV:");
+        ////debug(sensorData.ecgSample);
+        //debug(ecgValue);
+        //debug(", ");
+        ////debugln(sensorData.resSample);
+        //debugln(resValue);
+
+        Serial.print("dades convertides a mV: ");
+        Serial.print(ecgValue);
+        Serial.print(", ");
+        Serial.println(resValue);
 
     
         // -------------- Detecció de pics R --------------
@@ -149,7 +160,7 @@ void loop() {
         
         #ifdef ACTIVAR_BLE
         // -------------- BLE --------------
-        afegirDadesPaquet(&pBLE_U, ecgValue, resValue);   // Afegeix al paquet BLE i envia si està ple
+        afegirDadesPaquetTask(&pBLE_U, ecgValue, resValue);   // Afegeix al paquet BLE i envia si està ple
         //afegirDadesPaquet(&pBLE_U, sensorData.ecgSample, sensorData.resSample);   // Afegeix al paquet BLE i envia si està ple
         debugln("dades afegides al paq BLE");
         #endif

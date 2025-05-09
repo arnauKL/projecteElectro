@@ -8,8 +8,8 @@
 
 // Dades
 #define MAX_BUFFER_RR   512     // Dades que guardem de RR per fer la FFT (hauria de ser una potència de 2)
-#define BLE_MAX_BUF_ECG 30      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
-#define BLE_MAX_BUF_RES 30      // Nombre de dades de Resp q enviem elhora en un paquet
+#define BLE_MAX_BUF_ECG 10      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
+#define BLE_MAX_BUF_RES 10      // Nombre de dades de Resp q enviem elhora en un paquet
 
 
 // Detecció de pics R
@@ -62,7 +62,7 @@
  * pel seu Serial corresponent, i quan DEBUG sigui falsa (0), es substitueix per
  * res, és a dir, s'elimina.
  */
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG == 1  // Mode debug, mostrem per serial
 #define debug(x) Serial.print(x)
@@ -75,6 +75,7 @@
 #endif
 
 // Per poder anar provant incrementalment i executar el codi per parts:
-//#define ACTIVAR_BLE // fem servir BLE
+#define ACTIVAR_BLE     //fem servir BLE
+//#define CONVERTIR_MV  0 // Convertir a mV
 
 #endif

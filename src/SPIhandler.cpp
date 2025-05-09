@@ -200,9 +200,10 @@ ADS1292R_Data parseADS1292RData(uint8_t *buffer) {
   } statusConverter;
 
   union { // Per parsejar els bytes dels canals
-    uint8_t bytes[3]; // 3 bytes = 24 bits x canal
+    uint8_t bytes[4]; // 4 bytes = 24 bits x canal
     int32_t valor;    // 32 bits -> 4 bytes (el 4t bit l'emplenam fent extensió d signe)
   } canalConverter;
+
 
   // bits d'estat (bytes 0-2)
   statusConverter.bytes[3] = 0x00; // Posem un valor conegut als bits més grans (little-Endiannes)

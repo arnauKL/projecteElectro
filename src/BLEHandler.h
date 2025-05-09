@@ -9,6 +9,8 @@
 #include <BLEServer.h>
 #include <BLE2902.h>
 #include "config.h"
+#include "freertos/queue.h"
+
 
 typedef struct {
 // Estructura per guardar els paquets de BLE. Per ara només conté l'ECG
@@ -32,7 +34,10 @@ typedef union {
 // Funcions
 PaquetBLE_U crearPaquetBLE_U();
 void iniciarBLE();
+void iniciarBLEAmbTask();
+void bleTask(void* parameter);
 void enviarBytesBLE(uint8_t* data, size_t length);
 void afegirDadesPaquet(PaquetBLE_U* pq, float valorECG, float valorRES);
+void afegirDadesPaquetTask(PaquetBLE_U* paq_u, float valorECG, float valorRES);
 
 #endif

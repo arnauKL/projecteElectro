@@ -1,7 +1,8 @@
 // BLEHandler.cpp
 #include "BLEHandler.h"
 
-using namespace std;
+QueueHandle_t bleQueue = nullptr;  // Cua global
+
 
 BLEServer* pServer = NULL;
 BLECharacteristic* pCharacteristic = NULL;
@@ -23,7 +24,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 
 void iniciarBLE() {
     debugln("Iniciant BLE...");
-    BLEDevice::init("DEPRESP-32");
+    BLEDevice::init("mow-32");
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
     BLEService *pService = pServer->createService(SERVICE_UUID);
@@ -41,6 +42,34 @@ void iniciarBLE() {
     pAdvertising->setScanResponse(true);
     BLEDevice::startAdvertising();
     debugln("BLE iniciat i en publicació");
+}
+
+void iniciarBLEAmbTask() {
+    iniciarBLE();  // El teu init BLE original
+
+    // Crear cua per 2 paquets
+    bleQueue = xQueueCreate(1, sizeof(PaquetBLE_U));
+
+    // Crear la tasca BLE al core 1
+    xTaskCreatePinnedToCore(
+        bleTask,
+        "BLE_Task",
+        4096,
+        NULL,
+        1,
+        NULL,
+        1  // core 1
+    );
+}
+
+void bleTask(void* parameter) {
+    PaquetBLE_U paquetRebut;
+
+    while (true) {
+        if (xQueueReceive(bleQueue, &paquetRebut, portMAX_DELAY) == pdTRUE) {   // TODO: mirar portMAX_DELAY
+            enviarBytesBLE(paquetRebut.bytes, MIDA_TOTAL_PAQUET_BYTES);
+        }
+    }
 }
 
 // Iniciar el paquet
@@ -84,4 +113,18 @@ void afegirDadesPaquet(PaquetBLE_U* paq_u, float valorECG, float valorRES) {
     paq_u->p.bufferECG[paq_u->p.nEl] = valorECG;
     paq_u->p.bufferRES[paq_u->p.nEl] = valorRES;
     paq_u->p.nEl++;
+}
+
+void afegirDadesPaquetTask(PaquetBLE_U* paq_u, float valorECG, float valorRES) {
+    paq_u->p.bufferECG[paq_u->p.nEl] = valorECG;
+    paq_u->p.bufferRES[paq_u->p.nEl] = valorRES;
+    paq_u->p.nEl++;
+
+    if (paq_u->p.nEl >= BLE_MAX_BUF_ECG || paq_u->p.nEl >= BLE_MAX_BUF_RES) {
+        if (bleQueue != nullptr) {
+            xQueueSend(bleQueue, paq_u, pdMS_TO_TICKS(5)); // 5ms
+        }
+
+        paq_u->p.nEl = 0;  // reiniciem el buffer
+    }
 }
