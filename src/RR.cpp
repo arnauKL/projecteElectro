@@ -16,7 +16,6 @@ int afegirRR(BufRR* buf, float dada) {
         buf->nEl++;
         return 1;
     }
-    // altrament ignoram les dades (TODO: no s'hauria de fer, haurem d veure què fer)
     return 0;
 }
 
@@ -47,7 +46,7 @@ void interpolar(BufRR* interRR, BufRR* peakRR, BufRR* interTimeRR, BufRR* timeRR
     afegirRR(interRR, peakRR->vec[0]/1000);
     afegirRR(interTimeRR, timeRR->vec[0]);
 
-    int i = 0; // Un comptador
+    int i = 0;
     
     // Variables que necessitem per aplicar la fòrmula d'interpolació lineal
     float y0 = peakRR->vec[i]/1000;

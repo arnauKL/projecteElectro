@@ -42,7 +42,7 @@ void writeRegister(uint8_t reg, uint8_t value) { // Per escriure un registre a l
   
   digitalWrite(ADS1292_CS_PIN, LOW);
   delayMicroseconds(20);
-  SPI.transfer(0x40 | reg); // 0x40→OPCODE per escriure
+  SPI.transfer(0x40 | reg); // 0x40 -> OPCODE per escriure
   SPI.transfer(0x00);
   SPI.transfer(value);
   delayMicroseconds(20);
@@ -102,16 +102,18 @@ void SPIsetup() {
   // Configurem els registres 
   digitalWrite(ADS1292_CS_PIN, LOW);
   delayMicroseconds(200);
-  writeRegister(0x01, 0x01); // 00000001 Config1: 250 SPS
-  writeRegister(0x02, 0xA0); // 10100000 Config2: Enable RLD, test signal off
-  writeRegister(0x03, 0x10); // Lead-Off control
-  writeRegister(0x04, 0x50); // 01010000 congif del canal 1, RESP, PGAIN1 = 8     // Aquests dos potser els podem posar com a configuracions
-  writeRegister(0x05, 0x40); // 0100000 config del canal 2, ECG, PGAIN2 = 4       //                          "
-  writeRegister(0x07, 0x00); // LOFF_SENS, igual que a la presentació...
-  writeRegister(0x09, 0xC2); // 11000010 Li indiquem que volem fer els circuits de modulació i desmodulació, que volem que la fase de l'ona moduladora sigui 0 i que fem servir clock intern
-  writeRegister(0x0A, 0x07); // 00000011 Li indiquem que no fagi calibració, que la freq. de la RESP sigui 64 kHz i que la VREF sigui la interna
-  writeRegister(0x06, 0xA0); // 10100000 Li indiquem que freq. de chop sigiui freq. mod / 2 (32 kHz) i que volem fer servir RLD
-  writeRegister(0x0B, 0x00); // GPIO's, igual que a la presentació...
+  writeRegister(0x01, 0x01); // 00000001 Config1: 250 SPS           <-- OK
+  writeRegister(0x02, 0xA0); // 10100000 Config2: Enable RLD, test signal off <-- OK, // TODO: revisar test signal
+  writeRegister(0x03, 0x10); // 00010000 Lead-Off control      <-- OK
+  writeRegister(0x04, 0x50); // 01010000 congif del canal 1, RESP, PGAIN1 = 8   <-- OK
+  writeRegister(0x05, 0x40); // 01000000 config del canal 2, ECG, PGAIN2 = 4    <-- OK 
+  writeRegister(0x06, 0xA0); // 10100000 Li indiquem que freq. de chop sigiui freq. mod / 2 (32 kHz) i que volem fer servir RLD  <-- OK
+  writeRegister(0x07, 0x00); // 00000000 LOFF_SENS, igual que a la presentació... <-- OK (posam tot a 0 xq és el default, al pwpt posa 0xYY)
+  writeRegister(0x08, 0x00); // 00000000 (tot són els defaults) <-- OK
+  writeRegister(0x09, 0xC2); // 11000010 Li indiquem que volem fer els circuits de modulació i desmodulació, que volem que la fase de l'ona moduladora sigui 0 i que fem servir clock intern <-- OK
+  writeRegister(0x0A, 0x07); // 00000111 Li indiquem que no fagi calibració, que la freq. de la RESP sigui 64 kHz i que la VREF sigui la interna  <-- OK
+  writeRegister(0x0B, 0x00); // 00000000 GPIO's, no en volem fer servir cap
+
   delayMicroseconds(200);
   digitalWrite(ADS1292_CS_PIN, HIGH);
 

@@ -8,8 +8,8 @@
 
 // Dades
 #define MAX_BUFFER_RR   512     // Dades que guardem de RR per fer la FFT (hauria de ser una potència de 2)
-#define BLE_MAX_BUF_ECG 10      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
-#define BLE_MAX_BUF_RES 10      // Nombre de dades de Resp q enviem elhora en un paquet
+#define BLE_MAX_BUF_ECG 20      // Nombre de dades d'ECG que guardem i enviem alhora en un paquetBLE
+#define BLE_MAX_BUF_RES 20      // Nombre de dades de Resp q enviem elhora en un paquet
 
 
 // Detecció de pics R
@@ -77,5 +77,6 @@
 // Per poder anar provant incrementalment i executar el codi per parts:
 #define ACTIVAR_BLE     //fem servir BLE
 //#define CONVERTIR_MV  0 // Convertir a mV
+#define DETECTAR_INTERRUPTS
 
 #endif

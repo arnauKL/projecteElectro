@@ -116,9 +116,6 @@ void afegirDadesPaquet(PaquetBLE_U* paq_u, float valorECG, float valorRES) {
 }
 
 void afegirDadesPaquetTask(PaquetBLE_U* paq_u, float valorECG, float valorRES) {
-    paq_u->p.bufferECG[paq_u->p.nEl] = valorECG;
-    paq_u->p.bufferRES[paq_u->p.nEl] = valorRES;
-    paq_u->p.nEl++;
 
     if (paq_u->p.nEl >= BLE_MAX_BUF_ECG || paq_u->p.nEl >= BLE_MAX_BUF_RES) {
         if (bleQueue != nullptr) {
@@ -127,4 +124,9 @@ void afegirDadesPaquetTask(PaquetBLE_U* paq_u, float valorECG, float valorRES) {
 
         paq_u->p.nEl = 0;  // reiniciem el buffer
     }
+
+    paq_u->p.bufferECG[paq_u->p.nEl] = valorECG;
+    paq_u->p.bufferRES[paq_u->p.nEl] = valorRES;
+    paq_u->p.nEl++;
+
 }

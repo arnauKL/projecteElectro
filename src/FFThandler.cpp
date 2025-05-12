@@ -53,7 +53,3 @@ void computeStress(FFTbuffer* buff, float& sns, float& snp, float& stress){
     stress = sns/snp;
 
 }
-
-
-
-
