@@ -51,19 +51,29 @@ inline float convertirAmVres(uint32_t sampleRaw) {
     return 1000.0 * (sampleRaw * (V_REF / (GAIN_RES * TWO_POW_23)));
 }
 
+#ifdef CRONOMETRAR_LOOP
+static int sampleCount = 0;
+static unsigned long lastCheck = millis();
+#endif
+
 //-------------------------- Programa principal --------------------------
 void setup() {
 
     // -------------- Setup del Serial per debugar --------------
+    Serial.begin(BAUD_RATIO);
     debugbegin(BAUD_RATIO);
     debugln("Serial iniciat");
     delay(1000);
 
     // -------------- Setup del BLE --------------
     #ifdef ACTIVAR_BLE
-    //iniciarBLE(); // Iniciem la comunicació x BLE
+    #ifdef MULTICORE
     iniciarBLEAmbTask();
+    debugln("BLE iniciat multicore");
+    #else
+    iniciarBLE(); // Iniciem la comunicació x BLE
     debugln("BLE iniciat");
+    #endif
     #endif
 
     // -------------- Setup del SPI --------------
@@ -81,39 +91,35 @@ void setup() {
 void loop() {
 
     if(newSampleAvailable) {
+        debugln("DRDY LOW");
 
         // -------------- Arribada de dades --------------
         // Anar a cercar les dades de l'ADS:
         noInterrupts(); // Apagar interrupts per copiar dades en memòria compartida
         newSampleAvailable = false;
         interrupts(); // Re-encendre interrupts
-        //debugln("DRDY LOW");
+        #ifdef CRONOMETRAR_LOOP
+        unsigned long startProcessing = micros();
+        #endif
 
+        debugln("desactivat i activat interrupts");
         uint8_t spiData[9];         // 9 bytes --> 72 bits / 8 bitsperbyte
         ADS1292R_Data sensorData;   // Struct per re-ordenar els bytes
       
         readADS1292RData(spiData);  
-        //debugln("dades llegides de SPI");
+        debugln("dades llegides de SPI");
         sensorData = parseADS1292RData(spiData);
 
-        //debugln("dades parsejades");        
+        debugln("dades parsejades");        
 
         // Convertir a floats (mV)
         float ecgValue = convertirAmVecg(sensorData.ecgSample);
         float resValue = convertirAmVres(sensorData.resSample);
 
-        //debugln("dades convertides a mV:");
-        ////debug(sensorData.ecgSample);
-        //debug(ecgValue);
-        //debug(", ");
-        ////debugln(sensorData.resSample);
-        //debugln(resValue);
-
-        Serial.print("dades convertides a mV: ");
-        Serial.print(ecgValue);
-        Serial.print(", ");
-        Serial.println(resValue);
-
+        debug("dades convertides a mV: ");
+        debug(ecgValue);
+        debug(", ");
+        debugln(resValue);
     
         // -------------- Detecció de pics R --------------
         // sliding buffer per trobar pics de l'ECG
@@ -160,9 +166,29 @@ void loop() {
         
         #ifdef ACTIVAR_BLE
         // -------------- BLE --------------
+        #ifdef MULTICORE
         afegirDadesPaquetTask(&pBLE_U, ecgValue, resValue);   // Afegeix al paquet BLE i envia si està ple
-        //afegirDadesPaquet(&pBLE_U, sensorData.ecgSample, sensorData.resSample);   // Afegeix al paquet BLE i envia si està ple
+        debugln("dades afegides al paq BLE multicore");
+        #else
+        afegirDadesPaquet(&pBLE_U, ecgValue, resValue);   // Afegeix al paquet BLE i envia si està ple
         debugln("dades afegides al paq BLE");
+        #endif
+        #endif
+
+
+        #ifdef CRONOMETRAR_LOOP
+
+        sampleCount++;      // Mostrar nombre de samples que rebem en un segon
+        if (millis() - lastCheck >= 1000) {
+            Serial.print("Mostres rebudes aquest segon: ");
+            Serial.println(sampleCount);
+            sampleCount = 0;
+            lastCheck = millis();
+        }
+
+        unsigned long endProcessing = micros();     // Cronometrar quan tardem en executar tot el loop (~85 us)
+        Serial.print("Temps de processament (us): ");
+        Serial.println(endProcessing - startProcessing);
         #endif
     }
 }

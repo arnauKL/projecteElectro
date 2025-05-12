@@ -48,7 +48,7 @@ void iniciarBLEAmbTask() {
     iniciarBLE();  // El teu init BLE original
 
     // Crear cua per 2 paquets
-    bleQueue = xQueueCreate(1, sizeof(PaquetBLE_U));
+    bleQueue = xQueueCreate(2, sizeof(PaquetBLE_U));
 
     // Crear la tasca BLE al core 1
     xTaskCreatePinnedToCore(
@@ -56,9 +56,9 @@ void iniciarBLEAmbTask() {
         "BLE_Task",
         4096,
         NULL,
-        1,
+        0,  // Prioritat
         NULL,
-        1  // core 1
+        0  // core n-1
     );
 }
 

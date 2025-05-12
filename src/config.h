@@ -76,7 +76,8 @@
 
 // Per poder anar provant incrementalment i executar el codi per parts:
 #define ACTIVAR_BLE     //fem servir BLE
-//#define CONVERTIR_MV  0 // Convertir a mV
 #define DETECTAR_INTERRUPTS
+#define CRONOMETRAR_LOOP
+#define MULTICORE
 
 #endif
