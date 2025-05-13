@@ -48,7 +48,7 @@ void iniciarBLEAmbTask() {
     iniciarBLE();  // El teu init BLE original
 
     // Crear cua per 2 paquets
-    bleQueue = xQueueCreate(2, sizeof(PaquetBLE_U));
+    bleQueue = xQueueCreate(N_PAQUETS_CUA_MULTICORE, sizeof(PaquetBLE_U));
 
     // Crear la tasca BLE al core 1
     xTaskCreatePinnedToCore(
@@ -66,7 +66,7 @@ void bleTask(void* parameter) {
     PaquetBLE_U paquetRebut;
 
     while (true) {
-        if (xQueueReceive(bleQueue, &paquetRebut, portMAX_DELAY) == pdTRUE) {   // TODO: mirar portMAX_DELAY
+        if (xQueueReceive(bleQueue, &paquetRebut, pdMS_TO_TICKS(10)) == pdTRUE) {   // Esperem 10 milisegons (>4ms)
             enviarBytesBLE(paquetRebut.bytes, MIDA_TOTAL_PAQUET_BYTES);
         }
     }

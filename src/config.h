@@ -14,8 +14,7 @@
 
 // Detecció de pics R
 #define THRESHOLD_BIAS      0.8f
-#define SOROLL_SIM          0.1     // Soroll (percent) del senyal simulat (per provar robustesa de l'algo d detecció d pics)
-#define MIN_INTERVAL_PICS   200     // ms mínims entre un pic i el següent (potser enlloc de ms és millor contar mostres?)
+#define MIN_INTERVAL_PICS   200     // ms mínims entre un pic i el següent
 
 // Interpolació i FFT
 #define TEMPS_INTERPOLACIONS    250.0 // en ms, f = 4 Hz
@@ -25,6 +24,7 @@
 // BLE
 #define SERVICE_UUID            "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID     "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define N_PAQUETS_CUA_MULTICORE 7
 
 /// SPI 
 #define FREQ_SCLK_SPI           1000000 // freq del rellotge SPI (SCLK) en Hz -> 1MHz
@@ -77,7 +77,9 @@
 // Per poder anar provant incrementalment i executar el codi per parts:
 #define ACTIVAR_BLE     //fem servir BLE
 #define DETECTAR_INTERRUPTS
-#define CRONOMETRAR_LOOP
+//#define CRONOMETRAR_LOOP
 #define MULTICORE
+//#define MOSTRAR_MV_SERIAL
+//#define TEST_SIGNAL
 
 #endif

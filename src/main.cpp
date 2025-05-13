@@ -116,11 +116,13 @@ void loop() {
         float ecgValue = convertirAmVecg(sensorData.ecgSample);
         float resValue = convertirAmVres(sensorData.resSample);
 
-        debug("dades convertides a mV: ");
-        debug(ecgValue);
-        debug(", ");
-        debugln(resValue);
-    
+        #ifdef MOSTRAR_MV_SERIAL
+        Serial.print("dades convertides a mV: ");
+        Serial.print(ecgValue);
+        Serial.print(", ");
+        Serial.println(resValue);
+        #endif
+
         // -------------- Detecció de pics R --------------
         // sliding buffer per trobar pics de l'ECG
         anterior = actual;
