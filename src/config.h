@@ -27,7 +27,7 @@
 #define N_PAQUETS_CUA_MULTICORE 7
 
 /// SPI 
-#define FREQ_SCLK_SPI           1000000 // freq del rellotge SPI (SCLK) en Hz -> 1MHz
+#define FREQ_SCLK_SPI           500000 // freq del rellotge SPI (SCLK) en Hz -> 1MHz
 #define DELAY_CS_HIGH_MICROS    (4*(1000000/FREQ_SCLK_SPI))
 // Comandes de l'ADS1292R
 #define CMD_READ_REG    0x20
@@ -75,7 +75,7 @@
 #endif
 
 // Per poder anar provant incrementalment i executar el codi per parts:
-#define ACTIVAR_BLE     //fem servir BLE
+#define ACTIVAR_BLE
 #define DETECTAR_INTERRUPTS
 //#define CRONOMETRAR_LOOP
 #define MULTICORE

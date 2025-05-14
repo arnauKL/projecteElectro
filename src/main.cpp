@@ -141,7 +141,7 @@ void loop() {
                 debugln(rr);
         
                 // afegim al vector d'intervals RR
-                afegirRR(&bufferRR, rr);    // Aquesta funció ignora les dades si ja està ple el buffer (TODO: s'hauria de canviar)
+                afegirRR(&bufferRR, rr);    // Aquesta funció ignora les dades si ja està ple el buffer
                 afegirRR(&bufferTimeRR, tempsUltimPic); // Afegim el temps al seu vector
             }
         }
@@ -149,7 +149,7 @@ void loop() {
         // -------------- Intepolació i FFT --------------
 
         // Interpolem 
-        if (millis() > 150000 && !interpolationDone) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
+        if ((millis() > 150000 && !interpolationDone) || (bufferRR.nEl == MAX_BUFFER_RR)) { // Comencem a fer interpolacions a partir de dos minuts d'haver pres dades
 
             interpolar(&bufferInterRR, &bufferRR, &bufferInterTimeRR, &bufferTimeRR);
             interpolationDone = true;

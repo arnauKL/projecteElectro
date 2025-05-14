@@ -108,8 +108,11 @@ void SPIsetup() {
   writeRegister(0x01, 0x01); // 00000001 Config1: 250 SPS           <-- OK
   writeRegister(0x02, 0xA3); // 10100011 Config2: Enable RLD, test signal off <-- OK
   writeRegister(0x03, 0x10); // 00010000 Lead-Off control      <-- OK
-  writeRegister(0x04, 0x55); // 01010101 congif del canal 1, RESP, PGAIN1 = 8   <-- OK
-  writeRegister(0x05, 0x45); // 01000101 config del canal 2, ECG, PGAIN2 = 4    <-- OK 
+  //writeRegister(0x04, 0x55); // 01010101 congif del canal 1, RESP, PGAIN1 = 8   <-- OK
+  //writeRegister(0x05, 0x45); // 01000101 config del canal 2, ECG, PGAIN2 = 4    <-- OK 
+  writeRegister(0x04, 0b00010000); // congif del canal 1, RESP, PGAIN1 = 1
+  writeRegister(0x05, 0b00010000); // config del canal 2, ECG, PGAIN2 = 1
+  
   writeRegister(0x06, 0xA0); // 10100000 Li indiquem que freq. de chop sigiui freq. mod / 2 (32 kHz) i que volem fer servir RLD  <-- OK
   writeRegister(0x07, 0x00); // 00000000 LOFF_SENS, igual que a la presentació... <-- OK (posam tot a 0 xq és el default, al pwpt posa 0xYY)
   writeRegister(0x08, 0x00); // 00000000 (tot són els defaults) <-- OK
